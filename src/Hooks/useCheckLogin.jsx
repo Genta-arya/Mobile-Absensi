@@ -3,6 +3,7 @@ import {CheckSession} from '../Service/API/Authentikasi/Service_Authentikasi';
 import {useAuthStore} from '../Library/Zustand/AuthStore';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {pathScreen} from '../Constant/Constant';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const useCheckLogin = () => {
   const [loading, setLoading] = useState(false);
@@ -10,16 +11,22 @@ const useCheckLogin = () => {
   const path = useRoute();
   const navigate = useNavigation();
   const fetchData = async () => {
+    const tokenString = await AsyncStorage.getItem('token');
+    const token = tokenString ? JSON.parse(tokenString) : null;
+
+  
+
     setLoading(true);
     try {
-      const response = await CheckSession();
-     
+      const response = await CheckSession(token);
+
       setUser(response.data);
       if (path.name === 'Login') {
         navigate.navigate(pathScreen.Home);
       }
     } catch (error) {
       console.log(error);
+      navigate.navigate(pathScreen.Login);
     } finally {
       setLoading(false);
     }
@@ -30,7 +37,7 @@ const useCheckLogin = () => {
   }, []);
   return {
     loading,
-    user
+    user,
   };
 };
 

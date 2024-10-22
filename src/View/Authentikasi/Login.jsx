@@ -1,4 +1,11 @@
-import {Text, View, TextInput, TouchableOpacity, StatusBar} from 'react-native';
+import {
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  StatusBar,
+  ActivityIndicator,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {HandleLogin} from '../../Service/API/Authentikasi/Service_Authentikasi';
 import {useAuthStore} from '../../Library/Zustand/AuthStore';
@@ -6,19 +13,57 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {pathScreen} from '../../Constant/Constant';
 import {useNavigation} from '@react-navigation/native';
 import useCheckLogin from '../../Hooks/useCheckLogin';
+import {showMessage} from 'react-native-flash-message';
 const Login = () => {
   const [nim, setNim] = useState('');
   const [password, setPassword] = useState('');
   const {user, setUser} = useAuthStore();
   const navigate = useNavigation();
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const getToken = async () => {
+    try {
+      const tokenString = await AsyncStorage.getItem('token');
+      const token = tokenString ? JSON.parse(tokenString) : null;
+
+      setToken(token);
+    } catch (error) {
+      console.error('Error mengambil token:', error);
+    }
+  };
+
+  // Contoh penyimpanan token yang benar
+  const saveToken = async tokenData => {
+    try {
+      await AsyncStorage.setItem('token', JSON.stringify(tokenData));
+    } catch (error) {
+      console.error('Error menyimpan token:', error);
+    }
+  };
 
   useEffect(() => {
-    if (AsyncStorage.getItem('token')) {
-      navigate.navigate(pathScreen.Home);
-    }
+    getToken();
   }, []);
+  useEffect(() => {
+    if (token !== null) {
+      navigate.reset({
+        index: 0,
+        routes: [{name: pathScreen.Home}],
+      })
+    }
+  }, [token]);
   const HandleLogins = async () => {
     try {
+      if (nim === '' || password === '') {
+        showMessage({
+          message: 'Username atau password tidak boleh kosong',
+          type: 'danger',
+          icon: 'danger',
+          position: 'bottom',
+        });
+        return;
+      }
+      setLoading(true);
       const response = await HandleLogin(nim, password);
       showMessage({
         message: response.message,
@@ -29,15 +74,22 @@ const Login = () => {
 
       setUser(response.data);
 
-      await AsyncStorage.setItem('token', response.data.token);
+      saveToken(response.data.token);
 
-      navigate.navigate(pathScreen.Home);
+     navigate.reset({
+       index: 0,
+       routes: [{name: pathScreen.Home}],
+     })
     } catch (error) {
-      console.log(error);
+      
       showMessage({
-        message: error.message,
+        message: error.response?.data.message,
         type: 'danger',
+        icon: 'danger',
+        position: 'bottom',
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -99,6 +151,8 @@ const Login = () => {
       />
 
       <TouchableOpacity
+        activeOpacity={0.6}
+        disabled={loading}
         style={{
           width: '100%',
           height: 50,
@@ -108,10 +162,13 @@ const Login = () => {
           borderRadius: 8,
         }}
         onPress={() => {
-          // Handle login logic here
           HandleLogins();
         }}>
-        <Text style={{color: '#fff', fontWeight: 'bold'}}>Login</Text>
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={{color: '#fff', fontWeight: 'bold'}}>Login</Text>
+        )}
       </TouchableOpacity>
     </View>
   );

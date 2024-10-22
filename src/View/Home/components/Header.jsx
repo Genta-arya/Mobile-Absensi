@@ -1,23 +1,51 @@
-import {View, Text, Image} from 'react-native';
+import {View, Text, Image, Pressable} from 'react-native';
 import React from 'react';
+import { pathScreen } from '../../../Constant/Constant';
+import { useNavigation } from '@react-navigation/native';
 
-const Header = ({user}) => {
-  console.log(user);
+const Header = ({user }) => {
+  const navigate = useNavigation();
   return (
     <>
       <View
         style={{
-          borderColor: 'black',
-          borderWidth: 1,
-          padding: 10,
+          borderColor: 'gray',
+          borderWidth: 1.5,
+          padding: 5,
           borderRadius: 10,
         }}>
-        <View style={{flexDirection: 'row' , gap:5 , alignItems: 'center'}}>
-          <Image
-            source={{uri: user?.avatar}}
-            style={{width: 50, height: 50, borderRadius: 50}}
-          />
-          <Text>{user?.name || '-'}</Text>
+        <View
+          style={{
+            flexDirection: 'row-reverse',
+
+            padding: 10,
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 0,
+          }}>
+          <Pressable onPress={() => navigate.navigate(pathScreen.Profile)}>
+            <Image
+              source={{uri: user?.avatar || 'https://via.placeholder.com/150'}}
+              style={{
+                width: 50,
+                height: 50,
+                borderRadius: 50,
+              }}
+            />
+          </Pressable>
+
+          <View>
+            <Text style={{fontWeight: 'bold', fontSize: 18}}>
+              Selamat Datang
+            </Text>
+
+            <Text style={{fontWeight: 'bold', fontSize: 16}}>
+              Hi, {user?.name || '-'}
+            </Text>
+            <Text style={{fontSize: 12, color: 'gray', fontWeight: 'bold'}}>
+              {user?.nim}
+            </Text>
+          </View>
         </View>
       </View>
     </>

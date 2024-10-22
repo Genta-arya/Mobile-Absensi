@@ -8,7 +8,7 @@ const App = () => {
     <>
     
     <MyStack />
-    <FlashMessage style={{borderRadius: 40  , margin: 10}} />
+    <FlashMessage style={{margin: 20  , borderRadius:10 , alignItems:'center' , justifyContent:'center'}} position={'bottom'} />
 
     </>
   

@@ -7,17 +7,16 @@ export const Endpoint = {
 };
 
 export const Colors = {
-    red : "#b9c1c",
-    green:"#15803d",
-    grey:"#374151",
-    blue: "#1e40af",
-    primary : "#001238"
-
-}
-
+  red: '#b9c1c',
+  green: '#15803d',
+  grey: '#374151',
+  blue: '#1e40af',
+  primary: '#001238',
+  white: '#f5f5f5',
+};
 
 export const pathScreen = {
-    Login : "Login",
-    Home : "Home",
-
-}
+  Login: 'Login',
+  Home: 'Home',
+  Profile: 'Profile',
+};

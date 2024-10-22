@@ -10,7 +10,7 @@ const HomeScreen = () => {
 
   if (loading) return <Loading />;
   return (
-    <Container>
+    <Container >
       <View style={{flexDirection: "column"}}>
         <Header user={user} />
       </View>

@@ -1,4 +1,4 @@
-import { View, Text, Modal, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, Modal, ActivityIndicator, StyleSheet, StatusBar } from 'react-native';
 import React from 'react';
 
 const Loading = ({ loading }) => {
@@ -9,9 +9,10 @@ const Loading = ({ loading }) => {
       visible={loading}
       onRequestClose={() => {}} // Agar modal tidak tertutup saat menekan tombol back
     >
+      <StatusBar backgroundColor="rgba(0, 0, 0, 0.8)" barStyle="light-content" />
       <View style={styles.container}>
         <View style={styles.loadingBox}>
-          <ActivityIndicator size="large" color="#4CAF50" />
+          <ActivityIndicator size="large" color="black" />
          
         </View>
       </View>
@@ -24,7 +25,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Warna latar belakang transparan gelap
+    backgroundColor: 'rgba(0, 0, 0, 0.8)', 
   },
   loadingBox: {
     width: 150,

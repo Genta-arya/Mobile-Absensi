@@ -1,9 +1,10 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Endpoint} from '../../../Constant/Constant';
 import {AxiosConfig} from '../../AxiosConfig';
 
 export const HandleLogin = async (username, password) => {
 
-    console.log(Endpoint.Login)
+   
   try {
     const response = await AxiosConfig.post(Endpoint.Login, {
       nim: username,
@@ -15,3 +16,17 @@ export const HandleLogin = async (username, password) => {
     throw error;
   }
 };
+
+
+export const CheckSession = async () => { 
+  const token = await AsyncStorage.getItem('token');
+  try {
+    const response = await AxiosConfig.post(Endpoint.Session , {
+      token: token
+    }) ;
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error
+  }
+}

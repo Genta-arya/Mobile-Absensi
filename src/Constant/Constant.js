@@ -1,11 +1,10 @@
-export const API_URL = 'http://localhost:3008/api/v1';
+export const API_URL = 'https://dev-absensi.hkks.shop/api/v1';
 
 export const Endpoint = {
-  Login: `/login`,
-  Session: `/session`,
-  Logout: `/logout`,
+  Login: `${API_URL}/login`,
+  Session: `${API_URL}/session`,
+  Logout: `${API_URL}/logout`,
 };
-
 
 export const Colors = {
     red : "#b9c1c",

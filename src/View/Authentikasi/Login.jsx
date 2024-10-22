@@ -1,9 +1,32 @@
 import { Text, View, TextInput, TouchableOpacity, StatusBar } from 'react-native';
 import React, { useState } from 'react';
-
+import FlashMessage, { showMessage } from 'react-native-flash-message';
+import { HandleLogin } from '../../Service/API/Authentikasi/Service_Authentikasi';
+import Icon from 'react-native-vector-icons/FontAwesome';
 const Login = () => {
   const [nim, setNim] = useState('');
   const [password, setPassword] = useState('');
+
+  const HandleLogins = async () => {
+    try {
+
+        const  response = await HandleLogin(nim, password);
+        showMessage({
+            message: response.message,
+            type: 'success',
+            icon: 'success',
+            position: 'bottom',
+        })
+        
+    } catch (error) {
+
+        console.log(error);
+       showMessage({
+           message: error.message,
+           type: 'danger',
+       })
+    }
+  };
 
   return (
     <View style={{
@@ -20,6 +43,7 @@ const Login = () => {
         marginBottom: 30,
         color: 'black'
       }}>
+
         Login to Your Account
       </Text>
 
@@ -70,7 +94,7 @@ const Login = () => {
         }}
         onPress={() => {
           // Handle login logic here
-          console.log(`NIM: ${nim}, Password: ${password}`);
+          HandleLogins();
         }}
       >
         <Text style={{ color: '#fff', fontWeight: 'bold' }}>Login</Text>

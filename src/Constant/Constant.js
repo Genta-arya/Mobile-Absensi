@@ -1,10 +1,17 @@
 export const API_URL = 'https://dev-absensi.hkks.shop/api/v1';
-
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 export const Endpoint = {
   Login: `${API_URL}/login`,
   Session: `${API_URL}/session`,
   Logout: `${API_URL}/logout`,
 };
+
+
+
+export const Icons = {
+  FontAwesome5: FontAwesome5,
+}
+
 
 export const Colors = {
   red: '#b9c1c',

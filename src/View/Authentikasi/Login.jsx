@@ -28,7 +28,7 @@ const Login = () => {
 
       setToken(token);
     } catch (error) {
-      console.error('Error mengambil token:', error);
+      console.log('Error mengambil token:', error);
     }
   };
 

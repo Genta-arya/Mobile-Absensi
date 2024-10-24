@@ -1,9 +1,9 @@
 import {View, Text, Image, Pressable} from 'react-native';
 import React from 'react';
-import { pathScreen } from '../../../Constant/Constant';
-import { useNavigation } from '@react-navigation/native';
-
-const Header = ({user }) => {
+import {Colors, Icons, pathScreen} from '../../../Constant/Constant';
+import {useNavigation} from '@react-navigation/native';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+const Header = ({user}) => {
   const navigate = useNavigation();
   return (
     <>
@@ -30,21 +30,25 @@ const Header = ({user }) => {
                 width: 50,
                 height: 50,
                 borderRadius: 50,
+                borderWidth: 2,
+                borderColor: Colors.green,
               }}
             />
           </Pressable>
 
           <View>
-            <Text style={{fontWeight: 'bold', fontSize: 18}}>
+            <Text
+              style={{fontWeight: '800', fontSize: 18, color: Colors.green}}>
               Selamat Datang
             </Text>
 
             <Text style={{fontWeight: 'bold', fontSize: 16}}>
               Hi, {user?.name || '-'}
             </Text>
-            <Text style={{fontSize: 12, color: 'gray', fontWeight: 'bold'}}>
-              {user?.nim}
-            </Text>
+            <View style={{fontSize: 12, color: 'gray', fontWeight: 'bold' , flexDirection: 'row' , gap: 5 , marginTop: 5 , alignItems: 'center'}}>
+              <Icons.FontAwesome5 name="play" size={12} color="gray" />
+              <Text>{user?.nim}</Text>
+            </View>
           </View>
         </View>
       </View>

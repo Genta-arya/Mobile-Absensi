@@ -26,4 +26,5 @@ export const pathScreen = {
   Login: 'Login',
   Home: 'Home',
   Profile: 'Profile',
+  ListGrups : "ListGrup",
 };

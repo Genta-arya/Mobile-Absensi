@@ -93,7 +93,7 @@ const Login = () => {
     }
   };
 
-  console.log(user);
+
   return (
     <View
       style={{

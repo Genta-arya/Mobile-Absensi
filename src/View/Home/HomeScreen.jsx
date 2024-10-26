@@ -4,20 +4,23 @@ import useCheckLogin from '../../Hooks/useCheckLogin';
 import Loading from '../../Components/Loading';
 import Container from '../../Components/Container';
 import Header from './components/Header';
+import GrupScreen from '../GrupKegiatan/GrupScreen';
 
 const HomeScreen = () => {
-  const {loading, user} = useCheckLogin();
+  const {loading, fetchData, user} = useCheckLogin();
 
   if (loading) return <Loading />;
   return (
-    <Container >
-      <View style={{flexDirection: "column"}}>
+    <Container>
+      <View style={{flexDirection: 'column'}}>
         <Header user={user} />
+
+        <GrupScreen user={user} refresh={fetchData} />
       </View>
     </Container>
   );
 };
- 
+
 export default HomeScreen;
 
 const styles = StyleSheet.create({});

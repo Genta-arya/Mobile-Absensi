@@ -7,6 +7,9 @@ import Login from '../View/Authentikasi/Login';
 import ProfileScreen from '../View/Profile/ProfileScreen';
 import {Pressable, Text} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import MyTabs from './BottomNav';
+import ListGrup from '../View/GrupKegiatan/components/ListGrup';
+import HeaderLefts from '../Components/HeaderLeft';
 const Stack = createNativeStackNavigator();
 
 const MyStack = () => {
@@ -20,7 +23,7 @@ const MyStack = () => {
         />
         <Stack.Screen
           name={pathScreen.Home}
-          component={HomeScreen}
+          component={MyTabs}
           options={{title: 'Welcome', headerShown: false}}
         />
         <Stack.Screen
@@ -34,26 +37,26 @@ const MyStack = () => {
               backgroundColor: Colors.white,
             },
             statusBarAnimation: 'slide',
-            headerLeft: () => {
-              return (
-                <>
-                  <Pressable
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      marginRight: 20,
+            headerLeft: () => (
+              <>
+                <HeaderLefts navigation={navigation} />
+              </>
+            ),
+          })}
+        />
 
-                    }}
-                    accessible={true}
-                    accessibilityLabel="Kembali ke halaman sebelumnya"
-                    onPress={() => {
-                      navigation.goBack();
-                    }}>
-                    <FontAwesome5 name="angle-left" size={30} color="black" />
-                  </Pressable>
-                </>
-              );
+        <Stack.Screen
+          name={pathScreen.ListGrups}
+          component={ListGrup}
+          options={({navigation}) => ({
+            title: 'Daftar Grup',
+            headerShown: false,
+            headerTitleAlign: 'left',
+            headerStyle: {
+              backgroundColor: Colors.white,
             },
+            statusBarAnimation: 'slide',
+            headerLeft: () => <HeaderLefts navigation={navigation} />,
           })}
         />
       </Stack.Navigator>

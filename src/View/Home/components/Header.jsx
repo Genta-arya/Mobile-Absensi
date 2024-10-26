@@ -25,7 +25,7 @@ const Header = ({user}) => {
           }}>
           <Pressable onPress={() => navigate.navigate(pathScreen.Profile)}>
             <Image
-              source={{uri: user?.avatar || 'https://via.placeholder.com/150'}}
+       source={{ uri: user?.avatar ? user.avatar : 'https://via.placeholder.com/150' }}
               style={{
                 width: 50,
                 height: 50,

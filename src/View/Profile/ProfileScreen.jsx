@@ -118,7 +118,7 @@ const navigate = useNavigation()
         // Panggil fungsi updateAvatar dari service
         const result = await updateAvatar(user.id, formData);
 
-        console.log(result);
+
 
         if (result.message === 'Avatar updated successfully.') {
           showMessage({

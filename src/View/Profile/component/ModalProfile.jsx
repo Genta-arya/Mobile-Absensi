@@ -8,8 +8,8 @@ import {
   Alert,
 } from 'react-native';
 import React from 'react';
-import { showMessage } from 'react-native-flash-message';
-import { updateProfile } from '../../../Service/API/Profile/service_Profile';
+import {showMessage} from 'react-native-flash-message';
+import {updateProfile} from '../../../Service/API/Profile/service_Profile';
 
 const ModalProfile = ({
   name,
@@ -35,15 +35,24 @@ const ModalProfile = ({
         type: 'success',
         icon: 'success',
       });
-      setUser({...user, name: name, email}); // Update user data
+      setUser({...user, name: name, email}); 
       onClose();
     } catch (error) {
-      console.log(error);
-      showMessage({
-        message: 'Gagal',
-        description: 'Terjadi kesalahan saat menyimpan data profil',
-        type: 'danger',
-      });
+      if (error.response.status === 400) {
+        showMessage({
+          message: 'Gagal',
+          description: error.response.data.message,
+          type: 'info',
+          icon: 'info',
+        });
+      } else {
+        console.log(error);
+        showMessage({
+          message: 'Gagal',
+          description: 'Terjadi kesalahan saat menyimpan data profil',
+          type: 'danger',
+        });
+      }
     }
   };
   return (

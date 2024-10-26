@@ -5,6 +5,7 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {pathScreen} from '../Constant/Constant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useModalStore } from '../Library/Zustand/modalStore';
+import { showMessage } from 'react-native-flash-message';
 
 const useCheckLogin = () => {
   const [loading, setLoading] = useState(false);
@@ -32,8 +33,23 @@ const useCheckLogin = () => {
         navigate.navigate(pathScreen.Home);
       }
     } catch (error) {
-      console.log(error);
-      navigate.navigate(pathScreen.Login);
+
+      if (error.response.status === 401) {
+        navigate.navigate(pathScreen.Login);
+        // hapus token
+        await AsyncStorage.removeItem('token');
+        setUser(null);
+        
+      } else {
+
+        showMessage({
+           message: "Terjadi kesalahan. Silakan coba lagi.",
+           type: 'danger',
+           icon: 'danger',
+         });
+         navigate.navigate(pathScreen.Login);
+      }
+      
     } finally {
       setLoading(false);
     }
@@ -45,6 +61,7 @@ const useCheckLogin = () => {
   return {
     loading,
     user,
+    fetchData
   };
 };
 

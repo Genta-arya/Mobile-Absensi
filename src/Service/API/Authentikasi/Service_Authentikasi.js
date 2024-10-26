@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Endpoint} from '../../../Constant/Constant';
+import {API_URL, Endpoint} from '../../../Constant/Constant';
 import {AxiosConfig} from '../../AxiosConfig';
+import axios from 'axios';
 
 export const HandleLogin = async (username, password) => {
   try {
@@ -28,3 +29,16 @@ export const CheckSession = async token => {
 
 
 
+export const HandleLogout = async (id) => {
+
+  try {
+    const response = await axios.post(API_URL + `/logout`,{
+      id: id
+    });
+    return response.data;
+    
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}

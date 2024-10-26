@@ -16,16 +16,21 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 import {requestCameraPermission} from '../../Library/Permisions/CameraPermission';
 import {useModalStore} from '../../Library/Zustand/modalStore';
+import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import {
   updateAvatar,
   updateProfile,
 } from '../../Service/API/Profile/service_Profile';
 import {showMessage} from 'react-native-flash-message';
 import ModalProfile from './component/ModalProfile';
+import {HandleLogout} from '../../Service/API/Authentikasi/Service_Authentikasi';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 const ProfileScreen = () => {
   const {user, setUser} = useAuthStore();
-
+const navigate = useNavigation()
   const {onOpen, onClose, isOpen} = useModalStore();
   const [modalVisible, setModalVisible] = useState(false);
   const [nama, setNama] = useState(user?.name || '');
@@ -115,7 +120,7 @@ const ProfileScreen = () => {
 
         console.log(result);
 
-        if (result.message === "Avatar updated successfully.") {
+        if (result.message === 'Avatar updated successfully.') {
           showMessage({
             message: 'Avatar berhasil diperbarui!',
             type: 'success',
@@ -141,6 +146,31 @@ const ProfileScreen = () => {
       }
     } else {
       console.log('No image was selected');
+    }
+  };
+
+  const Logout = async () => {
+    try {
+      const response = await HandleLogout(user.id);
+      showMessage({
+        message: response.message,
+        type: 'success',
+        icon: 'success',
+      });
+      // remove token asynstroage
+      await AsyncStorage.removeItem('token');
+      setUser(null);
+      navigate.reset({
+        index: 0,
+        routes: [{name: 'Login'}],
+      })
+    } catch (error) {
+      console.error(error);
+      showMessage({
+        message: 'Terjadi kesalahan. Silakan coba lagi.',
+        type: 'danger',
+        icon: 'danger',
+      });
     }
   };
 
@@ -264,15 +294,15 @@ const ProfileScreen = () => {
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#4CAF50',
+          backgroundColor: 'red',
           paddingVertical: 10,
           paddingHorizontal: 20,
           borderRadius: 8,
           elevation: 5,
           marginTop: 10,
         }}
-        onPress={() => onOpen()}>
-        <Icon name="pencil" size={20} color="#fff" />
+        onPress={() => Logout()}>
+        <Icons name="logout" size={20} color="#fff" />
         <Text
           style={{
             marginLeft: 8,

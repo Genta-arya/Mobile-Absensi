@@ -6,10 +6,12 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import React from 'react';
 import {showMessage} from 'react-native-flash-message';
 import {updateProfile} from '../../../Service/API/Profile/service_Profile';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 const ModalProfile = ({
   name,
@@ -21,11 +23,14 @@ const ModalProfile = ({
   setNama,
   setEmail,
 }) => {
+  const [loading, setLoading] = React.useState(false);
   const handleSave = async () => {
     if (!name || !email) {
       Alert.alert('Notifikasi', 'Mohon lengkapi semua data');
       return;
     }
+
+    setLoading(true);
 
     try {
       await updateProfile(user.id, {name: name, email});
@@ -35,7 +40,7 @@ const ModalProfile = ({
         type: 'success',
         icon: 'success',
       });
-      setUser({...user, name: name, email}); 
+      setUser({...user, name: name, email});
       onClose();
     } catch (error) {
       if (error.response.status === 400) {
@@ -53,6 +58,8 @@ const ModalProfile = ({
           type: 'danger',
         });
       }
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -80,13 +87,16 @@ const ModalProfile = ({
             padding: 20,
           }}>
           <View style={{fontSize: 20, fontWeight: 'bold', marginBottom: 20}}>
-            <Text style={{fontSize: 20, fontWeight: '900'}}>Edit Profil</Text>
+            <Text style={{fontSize: 20, fontWeight: '900', color: 'black'}}>
+              Edit Profil
+            </Text>
           </View>
           <TextInput
             placeholder="Nama"
             value={name}
             onChangeText={setNama}
-            maxLength={20}
+            placeholderTextColor={'#ccc'}
+            maxLength={25}
             style={{
               borderWidth: 1,
               borderColor: '#ccc',
@@ -94,15 +104,18 @@ const ModalProfile = ({
               padding: 5,
               paddingLeft: 10,
               marginBottom: 20,
+              color: 'black',
             }}
           />
           <TextInput
             placeholder="Email"
             value={email}
+            placeholderTextColor={'#ccc'}
             onChangeText={setEmail}
             style={{
               borderWidth: 1,
               borderColor: '#ccc',
+              color: 'black',
               borderRadius: 5,
               padding: 5,
               paddingLeft: 10,
@@ -111,16 +124,24 @@ const ModalProfile = ({
           />
           <TouchableOpacity
             onPress={handleSave}
+            activeOpacity={0.9}
             style={{
               backgroundColor: '#4CAF50',
               padding: 10,
               borderRadius: 5,
               alignItems: 'center',
             }}>
-            <Text style={{color: '#fff', fontWeight: 'bold'}}>Simpan</Text>
+            <Text style={{color: '#fff', fontWeight: 'bold'}}>
+              {loading ? (
+                <ActivityIndicator size="small" color={"white"} />
+              ) : (
+                'Simpan'
+              )}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => onClose()}
+            activeOpacity={0.9}
             disabled={user?.name === null}
             style={{
               marginTop: 10,

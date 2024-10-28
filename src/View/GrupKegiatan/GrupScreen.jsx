@@ -11,14 +11,12 @@ import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faCalendar} from '@fortawesome/free-solid-svg-icons';
 import {Colors, pathScreen} from '../../Constant/Constant';
 import {useNavigation} from '@react-navigation/native';
+import {useGroupStore} from '../../Library/Zustand/GrupStore';
 
 const GrupScreen = ({user, refresh}) => {
   const navigate = useNavigation();
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const handlePress = idGrup => {
-    console.log('ID Grup:', idGrup); // Menampilkan ID grup di konsol
-  };
-
+  const {setGroupName} = useGroupStore();
   const onRefresh = async () => {
     setIsRefreshing(true);
 
@@ -26,11 +24,16 @@ const GrupScreen = ({user, refresh}) => {
     setIsRefreshing(false);
   };
 
+  const handlePress = item => {
+    navigate.navigate(pathScreen.ListAgenda, {grupId: item.id});
+    setGroupName(item.nama_grup);
+  };
+
   const renderItem = ({item}) => {
     return (
       <TouchableOpacity
         activeOpacity={0.9}
-        onPress={() => handlePress(item.id)}
+        onPress={() => handlePress(item)}
         style={{
           marginRight: 15,
           padding: 16,
@@ -107,16 +110,16 @@ const GrupScreen = ({user, refresh}) => {
         <Text
           style={{
             fontSize: 20,
-            fontWeight: 'bold',
+            fontWeight: '900',
 
             color: 'black',
           }}>
           Grup Kegiatan
         </Text>
         <TouchableOpacity
-        activeOpacity={0.9}
+          activeOpacity={0.9}
           onPress={() => navigate.navigate(pathScreen.ListGrups)}>
-          <Text style={{fontSize: 14, color: 'black', fontWeight: 'bold'}}>
+          <Text style={{fontSize: 14, color: Colors.green, fontWeight: '800'}}>
             Lihat semua
           </Text>
         </TouchableOpacity>

@@ -1,5 +1,6 @@
 import { View, Text, Modal, ActivityIndicator, StyleSheet, StatusBar } from 'react-native';
 import React from 'react';
+import { Colors } from '../Constant/Constant';
 
 const Loading = ({ loading }) => {
   return (
@@ -12,7 +13,7 @@ const Loading = ({ loading }) => {
       <StatusBar backgroundColor="rgba(0, 0, 0, 0.8)" barStyle="light-content" />
       <View style={styles.container}>
         <View style={styles.loadingBox}>
-          <ActivityIndicator size="large" color="black" />
+          <ActivityIndicator size="large" color={Colors.green} />
          
         </View>
       </View>

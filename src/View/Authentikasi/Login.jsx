@@ -123,6 +123,7 @@ const Login = () => {
           width: '100%',
           height: 50,
           borderColor: '#ccc',
+          color: 'black',
           borderWidth: 1,
           borderRadius: 8,
           paddingLeft: 15,
@@ -141,7 +142,7 @@ const Login = () => {
           width: '100%',
           height: 50,
           borderColor: '#ccc',
-
+          color: 'black',
           borderWidth: 1,
           borderRadius: 8,
           paddingLeft: 15,

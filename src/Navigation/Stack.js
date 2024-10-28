@@ -10,9 +10,13 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MyTabs from './BottomNav';
 import ListGrup from '../View/GrupKegiatan/components/ListGrup';
 import HeaderLefts from '../Components/HeaderLeft';
+import AgendaScreen from '../View/Agenda/AgendaScreen';
+import { useGroupStore } from '../Library/Zustand/GrupStore';
 const Stack = createNativeStackNavigator();
 
 const MyStack = () => {
+
+  const {groupName} = useGroupStore();
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -51,6 +55,21 @@ const MyStack = () => {
           options={({navigation}) => ({
             title: 'Daftar Grup',
             headerShown: false,
+            headerTitleAlign: 'left',
+            headerStyle: {
+              backgroundColor: Colors.white,
+            },
+            statusBarAnimation: 'slide',
+            headerLeft: () => <HeaderLefts navigation={navigation} />,
+          })}
+        />
+
+        <Stack.Screen
+          name={pathScreen.ListAgenda}
+          component={AgendaScreen}
+          options={({navigation}) => ({
+            title: groupName,
+            headerShown: true,
             headerTitleAlign: 'left',
             headerStyle: {
               backgroundColor: Colors.white,

@@ -11,13 +11,15 @@ import React, {useState} from 'react';
 import HeaderBack from '../../../Components/HeaderBack';
 import {useNavigation} from '@react-navigation/native';
 import {useAuthStore} from '../../../Library/Zustand/AuthStore';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome'; // Import FontAwesomeIcon
-import {faInfoCircle} from '@fortawesome/free-solid-svg-icons'; // Import ikon info
-import {Colors, Icons} from '../../../Constant/Constant';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome'; 
+import {faArrowRight, faInfoCircle} from '@fortawesome/free-solid-svg-icons'; 
+import {Colors, Icons, pathScreen} from '../../../Constant/Constant';
 import {SearchBar} from 'react-native-screens';
 import SearchComponent from '../../../Components/Search';
 import {useSearchStore} from '../../../Library/Zustand/SearchStore';
 import Container from '../../../Components/Container';
+import { formatDate } from '../../../Utils/Utils';
+import { useGroupStore } from '../../../Library/Zustand/GrupStore';
 
 const ListGrup = () => {
   const navigation = useNavigation();
@@ -25,34 +27,42 @@ const ListGrup = () => {
   const {searchTerm} = useSearchStore();
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedKegiatan, setSelectedKegiatan] = useState(null);
-
+const {setGroupName} = useGroupStore()
   const showModal = kegiatan => {
     setSelectedKegiatan(kegiatan);
     setModalVisible(true);
   };
 
+  const handlePress = (item) => { 
+    navigation.navigate(pathScreen.ListAgenda, {grupId: item.id});
+    setGroupName(item.nama_grup)
+  }
+
   const renderItem = ({item}) => (
     <TouchableOpacity
       activeOpacity={0.9}
       style={{
-        padding: 15,
+        paddingLeft:5,
+        paddingVertical: 14,
         borderBottomWidth: 1,
         borderBottomColor: '#e0e0e0',
-
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
       }}
       onPress={() => {
-        navigation.navigate('DetailGrup', {grupId: item.id});
+        handlePress(item);
       }}>
       <View
         style={{flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10}}>
-        <Icons.FontAwesome5 name="list" size={20} color={Colors.green} />
-        <Text style={{fontSize: 16, fontWeight: 'bold'}}>{item.nama_grup}</Text>
+            <FontAwesomeIcon icon={faArrowRight} size={15} color={Colors.green} />
+        <Text style={{fontSize: 16, fontWeight: '800' , color: 'black'}}>{item.nama_grup}</Text>
       </View>
 
-      <TouchableOpacity onPress={() => showModal(item.kegiatan)}>
+      <TouchableOpacity
+        accessibilityActions={[{name: 'info', label: 'info'}]}
+        activeOpacity={0.9}
+        onPress={() => showModal(item.kegiatan)}>
         <FontAwesomeIcon icon={faInfoCircle} size={20} color={Colors.green} />
       </TouchableOpacity>
     </TouchableOpacity>
@@ -61,6 +71,7 @@ const ListGrup = () => {
   const filteredData = user.Group.filter(item =>
     item.nama_grup.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+ 
 
   return (
     <>
@@ -70,6 +81,9 @@ const ListGrup = () => {
         <FlatList
           data={filteredData}
           renderItem={renderItem}
+          ListEmptyComponent={() => (
+            <Text style={{textAlign: 'center' , color: 'gray'}}>Grup tidak ditemukan</Text>
+          )}
           keyExtractor={item => item.id}
         />
 
@@ -93,13 +107,21 @@ const ListGrup = () => {
               style={{
                 backgroundColor: 'white',
                 padding: 20,
-                borderRadius: 10,
-                width: '80%',
+                borderTopLeftRadius: 20,
+                borderTopRightRadius: 20,
+                position: 'absolute',
+                width: '100%',
+                height: '25%',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                margin: 0,
               }}>
               <Text
                 style={{
                   fontSize: 18,
-                  fontWeight: 'bold',
+                  fontWeight: '900',
+                  color: "gray",
                   marginBottom: 10,
                   alignSelf: 'center',
                 }}>
@@ -110,25 +132,33 @@ const ListGrup = () => {
                   <Text style={{fontSize: 16}}>
                     {selectedKegiatan.nama || 'Kegiatan Tanpa Nama'}
                   </Text>
+                  {/* hilangkan jam nya
+                   */}
 
                   <Text style={{color: '#666'}}>
                     Mulai:{' '}
-                    {new Date(selectedKegiatan.waktumulai).toLocaleString()}
+                    {formatDate(selectedKegiatan.waktumulai)}
                   </Text>
                   <Text style={{color: '#666'}}>
                     Selesai:{' '}
-                    {new Date(selectedKegiatan.waktuselesai).toLocaleString()}
+                    {formatDate(selectedKegiatan.waktuselesai)}
                   </Text>
                 </View>
               ) : (
                 <Text>Tidak ada kegiatan untuk ditampilkan.</Text>
               )}
               <TouchableOpacity
+                activeOpacity={0.9}
                 style={{
                   marginTop: 10,
+                  position: 'absolute',
+                  bottom: 15,
+                  width: '100%',
+                  left: 20,
+                  right: 20,
                   backgroundColor: Colors.green,
                   padding: 10,
-                  borderRadius: 5,
+                  borderRadius:25,
                   alignItems: 'center',
                 }}
                 onPress={() => setModalVisible(false)}>

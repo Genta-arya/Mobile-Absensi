@@ -30,6 +30,7 @@ const Header = ({user}) => {
                 width: 50,
                 height: 50,
                 borderRadius: 50,
+                
                 borderWidth: 2,
                 borderColor: Colors.green,
               }}
@@ -42,12 +43,12 @@ const Header = ({user}) => {
               Selamat Datang
             </Text>
 
-            <Text style={{fontWeight: 'bold', fontSize: 16}}>
+            <Text style={{fontWeight: 'bold', fontSize: 16 , color: "black"}}>
               Hi, {user?.name || '-'}
             </Text>
             <View style={{fontSize: 12, color: 'gray', fontWeight: 'bold' , flexDirection: 'row' , gap: 5 , marginTop: 5 , alignItems: 'center'}}>
               <Icons.FontAwesome5 name="play" size={12} color="gray" />
-              <Text>{user?.nim}</Text>
+              <Text style={{fontSize: 12, color: 'gray', fontWeight: 'bold'}}>{user?.nim}</Text>
             </View>
           </View>
         </View>

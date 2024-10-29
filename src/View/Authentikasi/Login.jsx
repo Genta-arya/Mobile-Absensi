@@ -83,7 +83,7 @@ const Login = () => {
     } catch (error) {
       
       showMessage({
-        message: error.response?.data.message,
+        message: error.response?.data.message || 'Gagal terhubung ke server',
         type: 'danger',
         icon: 'danger',
         position: 'bottom',

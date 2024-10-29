@@ -6,4 +6,5 @@ export const AxiosConfig = axios.create({
   headers: {
     'Content-type': 'application/json',
   },
+  timeout: 15000,
 });

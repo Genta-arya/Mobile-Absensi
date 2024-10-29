@@ -12,6 +12,8 @@ import React from 'react';
 import {showMessage} from 'react-native-flash-message';
 import {updateProfile} from '../../../Service/API/Profile/service_Profile';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {useNavigation} from '@react-navigation/native';
+import useErrorHandler from '../../../Hooks/useErrorHandler';
 
 const ModalProfile = ({
   name,
@@ -24,6 +26,8 @@ const ModalProfile = ({
   setEmail,
 }) => {
   const [loading, setLoading] = React.useState(false);
+  const navigate = useNavigation();
+  const handlerError = useErrorHandler();
   const handleSave = async () => {
     if (!name || !email) {
       Alert.alert('Notifikasi', 'Mohon lengkapi semua data');
@@ -43,6 +47,9 @@ const ModalProfile = ({
       setUser({...user, name: name, email});
       onClose();
     } catch (error) {
+      handlerError(error, 'Profile');
+      onClose();
+
       if (error.response.status === 400) {
         showMessage({
           message: 'Gagal',
@@ -57,6 +64,7 @@ const ModalProfile = ({
           description: 'Terjadi kesalahan saat menyimpan data profil',
           type: 'danger',
         });
+        navigate.navigate('Error');
       }
     } finally {
       setLoading(false);
@@ -133,7 +141,7 @@ const ModalProfile = ({
             }}>
             <Text style={{color: '#fff', fontWeight: 'bold'}}>
               {loading ? (
-                <ActivityIndicator size="small" color={"white"} />
+                <ActivityIndicator size="small" color={'white'} />
               ) : (
                 'Simpan'
               )}

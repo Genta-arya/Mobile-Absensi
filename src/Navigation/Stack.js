@@ -12,6 +12,7 @@ import ListGrup from '../View/GrupKegiatan/components/ListGrup';
 import HeaderLefts from '../Components/HeaderLeft';
 import AgendaScreen from '../View/Agenda/AgendaScreen';
 import { useGroupStore } from '../Library/Zustand/GrupStore';
+import ErrorScreen from '../Components/ErrorScreen';
 const Stack = createNativeStackNavigator();
 
 const MyStack = () => {
@@ -76,6 +77,15 @@ const MyStack = () => {
             },
             statusBarAnimation: 'slide',
             headerLeft: () => <HeaderLefts navigation={navigation} />,
+          })}
+        />
+          <Stack.Screen
+          name={"Error"}
+          component={ErrorScreen}
+          options={({navigation}) => ({
+            title: groupName,
+            headerShown: false,
+            statusBarAnimation: 'slide',
           })}
         />
       </Stack.Navigator>

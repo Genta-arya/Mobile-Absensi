@@ -27,15 +27,16 @@ import ModalProfile from './component/ModalProfile';
 import {HandleLogout} from '../../Service/API/Authentikasi/Service_Authentikasi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import useErrorHandler from '../../Hooks/useErrorHandler';
 
 const ProfileScreen = () => {
   const {user, setUser} = useAuthStore();
-const navigate = useNavigation()
+  const navigate = useNavigation();
   const {onOpen, onClose, isOpen} = useModalStore();
   const [modalVisible, setModalVisible] = useState(false);
   const [nama, setNama] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
-
+  const handleError = useErrorHandler();
   const handleImagePick = async () => {
     const hasPermission = await requestCameraPermission();
     if (!hasPermission) {
@@ -137,12 +138,7 @@ const navigate = useNavigation()
           });
         }
       } catch (error) {
-        console.error(error);
-        showMessage({
-          message: 'Terjadi kesalahan. Silakan coba lagi.',
-          type: 'danger',
-          icon: 'danger',
-        });
+        handleError(error, '*');
       }
     } else {
       console.log('No image was selected');
@@ -165,12 +161,8 @@ const navigate = useNavigation()
         routes: [{name: 'Login'}],
       })
     } catch (error) {
-      console.error(error);
-      showMessage({
-        message: 'Terjadi kesalahan. Silakan coba lagi.',
-        type: 'danger',
-        icon: 'danger',
-      });
+      handleError(error, '*');
+      
     }
   };
 

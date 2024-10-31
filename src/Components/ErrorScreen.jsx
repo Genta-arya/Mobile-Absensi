@@ -5,9 +5,13 @@ import useUserStore from '../Library/Zustand/SessionStore';
 import Loading from './Loading';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const ErrorScreen = () => {
   const { fetchData, hasError, isFetching } = useUserStore();
+  const route = useRoute();
+  const routes = route.name
+  const navigate = useNavigation();
 
   if (isFetching) {
     return <Loading />;
@@ -17,7 +21,7 @@ const ErrorScreen = () => {
     <View style={styles.container}>
       <Image source={images.ErrorNetwork} style={styles.image} />
      
-      <TouchableOpacity style={styles.button} onPress={fetchData} activeOpacity={0.8}>
+      <TouchableOpacity style={styles.button} onPress={() => fetchData(navigate,"_",routes)} activeOpacity={0.8}>
         <FontAwesomeIcon icon={faRefresh} size={24} color="white" />
         <Text style={styles.buttonText}>Coba lagi</Text>
       </TouchableOpacity>

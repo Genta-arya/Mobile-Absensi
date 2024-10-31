@@ -13,6 +13,7 @@ import HeaderLefts from '../Components/HeaderLeft';
 import AgendaScreen from '../View/Agenda/AgendaScreen';
 import { useGroupStore } from '../Library/Zustand/GrupStore';
 import ErrorScreen from '../Components/ErrorScreen';
+import FormKegiatan from '../View/Form/FormKegiatan';
 const Stack = createNativeStackNavigator();
 
 const MyStack = () => {
@@ -86,6 +87,19 @@ const MyStack = () => {
             title: groupName,
             headerShown: false,
             statusBarAnimation: 'slide',
+          })}
+        />
+             <Stack.Screen
+          name={"Form"}
+          component={FormKegiatan}
+          options={({navigation}) => ({
+            title: "Form Absensi",
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: Colors.white,
+            },
+            statusBarAnimation: 'slide',
+            headerLeft: () => <HeaderLefts navigation={navigation} />,
           })}
         />
       </Stack.Navigator>

@@ -1,5 +1,5 @@
 import NetWrokError from "../Assets/Image/NetworkError.png"
-
+import Empty from "../Assets/Image/empty.png"
 
 
 
@@ -40,5 +40,6 @@ export const pathScreen = {
 }
 
 export const images = {
-  ErrorNetwork : NetWrokError
+  ErrorNetwork : NetWrokError,
+  Empty : Empty
 }

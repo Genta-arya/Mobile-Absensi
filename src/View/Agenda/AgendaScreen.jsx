@@ -1,15 +1,20 @@
 import {View, Text, FlatList, TouchableOpacity} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {useRoute} from '@react-navigation/native';
+import React, {useEffect, useState, useLayoutEffect} from 'react';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import {useAuthStore} from '../../Library/Zustand/AuthStore';
 import {getAgenda} from '../../Service/API/Agenda/Service_Agenda';
 import Container from '../../Components/Container';
 import {Colors} from '../../Constant/Constant';
-import {showMessage} from 'react-native-flash-message';
 import useErrorHandler from '../../Hooks/useErrorHandler';
 import Loading from '../../Components/Loading';
 import CustomBottomSheet from '../../Components/BottomSheet';
 import DetailAgenda from './DetailAgenda';
+import useClaimAgenda from '../../Hooks/useClaimAgenda';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AgendaScreen = () => {
   const route = useRoute();
@@ -18,8 +23,13 @@ const AgendaScreen = () => {
   const [agendas, setAgendas] = useState([]);
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [selectedAgenda, setSelectedAgenda] = useState(null); // State untuk menyimpan agenda yang dipilih
+  const navigate = useNavigation();
+  const [selectedAgenda, setSelectedAgenda] = useState(null);
   const HandleError = useErrorHandler();
+  const {claim} = useClaimAgenda();
+
+  // State untuk menampilkan tombol kirim absensi
+  const [showAbsensiButton, setShowAbsensiButton] = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
@@ -39,23 +49,44 @@ const AgendaScreen = () => {
     }
   };
 
+  // Gunakan useEffect untuk memanggil fetchData saat komponen dimuat
   useEffect(() => {
     fetchData();
   }, []);
 
+  // Cek untuk menampilkan tombol kirim absensi
+  const checkForAbsensiButton = async () => {
+    const existingData = await AsyncStorage.getItem('formData');
+    const formArray = existingData ? JSON.parse(existingData) : [];
+
+    // Cek apakah ada agendaId dan semua data tidak kosong
+    const shouldShow = agendas.some(agenda =>
+      formArray.some(
+        data =>
+          data.agendaId === agenda.id &&
+          data.detail &&
+          data.gps &&
+          data.tanggal &&
+          data.gambar1 &&
+          data.gambar2,
+      ),
+    );
+    setShowAbsensiButton(shouldShow);
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      checkForAbsensiButton(); 
+    }, [agendas]) 
+  );
   if (loading) {
     return <Loading />;
   }
 
-  const handleKegiatan = item => {
+  const handleKegiatan = async item => {
     if (!item.status) {
-      // Logika untuk mengambil kegiatan
-      console.log(`Mengambil kegiatan: ${item.id}`);
-      showMessage({
-        message: 'Agenda Berhasil Diambil',
-        type: 'success',
-        icon: 'success',
-      });
+      await claim(item.id);
+      fetchData();
     }
   };
 
@@ -72,26 +103,53 @@ const AgendaScreen = () => {
         alignItems: 'center',
       }}>
       <TouchableOpacity
+        activeOpacity={0.9}
         onPress={() => {
-          setSelectedAgenda(item); // Simpan agenda yang dipilih
-          setVisible(true); // Tampilkan bottom sheet
+          if (!visible) {
+            setSelectedAgenda(item);
+            setVisible(true);
+          }
         }}>
         <Text style={{fontWeight: 'bold', fontSize: 16, color: 'black'}}>
           {item.nama}
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => handleKegiatan(item)}
-        disabled={item.status}
-        style={{
-          backgroundColor: item.status ? 'red' : Colors.green,
-          padding: 10,
-          borderRadius: 5,
-        }}>
-        <Text style={{color: 'white'}}>
-          {item.status ? 'Agenda Sudah Diambil' : 'Ambil Agenda'}
-        </Text>
-      </TouchableOpacity>
+
+      { (
+        <TouchableOpacity
+          onPress={() => handleKegiatan(item)}
+          disabled={item.status}
+          style={{
+            backgroundColor:
+              item.idUser === user.id
+                ? '#37AFE1'
+                : item.status
+                ? 'red'
+                : '#4CAF50',
+            padding: 10,
+            alignItems: 'center',
+            width: 110,
+            borderRadius: 5,
+          }}>
+          <Text style={{color: 'white'}}>
+            {item.idUser === user.id ? (
+              <View>
+                <TouchableOpacity
+                  activeOpacity={0.9}
+                  onPress={() =>
+                    navigate.navigate('Form', {agendaId: item.id})
+                  }>
+                  <Text style={{color: 'white'}}>Absensi Agenda</Text>
+                </TouchableOpacity>
+              </View>
+            ) : item.status ? (
+              'Sudah Diambil'
+            ) : (
+              'Ambil Agenda'
+            )}
+          </Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 
@@ -108,6 +166,21 @@ const AgendaScreen = () => {
             </Text>
           }
         />
+        {showAbsensiButton && (
+          <TouchableOpacity
+            style={{
+              backgroundColor: Colors.green,
+              padding: 15,
+              borderRadius: 5,
+              alignItems: 'center',
+              margin: 20,
+            }}
+            onPress={() => navigate.navigate('KirimAbsensi')}>
+            <Text style={{color: 'white', fontWeight: 'bold'}}>
+              Kirim Absensi
+            </Text>
+          </TouchableOpacity>
+        )}
       </Container>
       {visible && (
         <View style={{position: 'absolute', bottom: 0, width: '100%'}}>

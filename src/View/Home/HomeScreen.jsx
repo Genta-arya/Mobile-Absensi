@@ -6,6 +6,7 @@ import Container from '../../Components/Container';
 import Header from './components/Header';
 import GrupScreen from '../GrupKegiatan/GrupScreen';
 import ErrorScreen from '../../Components/ErrorScreen';
+import TrackAbsensiForm from '../TrackForm/TrackAbsensiForm';
 
 const HomeScreen = () => {
   const {loading, fetchData, user } = useCheckLogin();
@@ -18,6 +19,8 @@ const HomeScreen = () => {
         <Header user={user} />
 
         <GrupScreen user={user} refresh={fetchData} />
+
+        <TrackAbsensiForm />
       </View>
     </Container>
   );

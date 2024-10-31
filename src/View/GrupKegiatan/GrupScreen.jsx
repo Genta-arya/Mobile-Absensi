@@ -4,12 +4,10 @@ import {
   FlatList,
   TouchableOpacity,
   RefreshControl,
+  Image,
 } from 'react-native';
 import React, {useState} from 'react';
-import {useAuthStore} from '../../Library/Zustand/AuthStore';
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faCalendar} from '@fortawesome/free-solid-svg-icons';
-import {Colors, pathScreen} from '../../Constant/Constant';
+import {Colors, images, pathScreen} from '../../Constant/Constant';
 import {useNavigation} from '@react-navigation/native';
 import {useGroupStore} from '../../Library/Zustand/GrupStore';
 
@@ -116,20 +114,56 @@ const GrupScreen = ({user, refresh}) => {
           }}>
           Grup Kegiatan
         </Text>
-        <TouchableOpacity
-          activeOpacity={0.9}
-          onPress={() => navigate.navigate(pathScreen.ListGrups)}>
-          <Text style={{fontSize: 14, color: Colors.green, fontWeight: '800'}}>
-            Lihat semua
-          </Text>
-        </TouchableOpacity>
+        {user?.Group?.length > 0 && (
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={() => navigate.navigate(pathScreen.ListGrups)}>
+            <Text
+              style={{fontSize: 14, color: Colors.green, fontWeight: '800'}}>
+              Lihat semua
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
       <FlatList
         data={user?.Group?.slice(0, 5)}
         renderItem={renderItem}
         showsHorizontalScrollIndicator={false}
-        horizontal={true}
+        horizontal={user?.Group?.length > 0 ? true : false}
         keyExtractor={(item, index) => index.toString()}
+        ListEmptyComponent={
+          <View
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: 20,
+            }}>
+            <Image
+              source={images.Empty}
+              style={{
+                width: 200,
+                height: 200,
+                alignSelf: 'center',
+                borderRadius: 50,
+                borderWidth: 0.5,
+                borderColor: 'gray',
+              }}
+            />
+
+            <Text
+              style={{
+                fontSize: 16,
+                alignSelf: 'center',
+                textAlign: 'center',
+                fontWeight: '600',
+                color: 'gray',
+                marginTop: 15,
+              }}>
+              Belum punya Grup Kegiatan
+            </Text>
+          </View>
+        }
         contentContainerStyle={{paddingBottom: 20}}
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />

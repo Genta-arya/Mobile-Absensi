@@ -9,19 +9,18 @@ const useUserStore = create(set => ({
   hasError: false,
   errorMessage: null,
 
-  fetchData: async (navigation, setUser, route , handleError) => {
+  fetchData: async (navigation, setUser, route, handleError) => {
     const tokenString = await AsyncStorage.getItem('token');
     const token = tokenString ? JSON.parse(tokenString) : null;
     set({isFetching: true, hasError: false, errorMessage: null});
+  
 
     try {
       const response = await CheckSession(token);
-
-      setUser(response.data);
-
-      if (route === "Error") {
+      if (route === 'Error') {
         navigation.navigate(pathScreen.Home);
       }
+      setUser(response.data);
 
       if (response.data.name === null) {
         navigation.navigate(pathScreen.Profile);

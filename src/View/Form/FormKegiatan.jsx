@@ -23,6 +23,7 @@ import {useRoute} from '@react-navigation/native';
 import {showMessage} from 'react-native-flash-message';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faCamera, faImage} from '@fortawesome/free-solid-svg-icons';
+import { useAuthStore } from '../../Library/Zustand/AuthStore';
 
 const FormKegiatan = () => {
   const {
@@ -43,7 +44,8 @@ const FormKegiatan = () => {
   const [road, setRoad] = useState('');
   const [loading, setLoading] = useState(false);
   const route = useRoute();
-
+  const {user} = useAuthStore();
+  const [locationError, setLocationError] = useState(false);
   // Mengambil agendaId dari params
   const {agendaId} = route.params;
 
@@ -73,6 +75,24 @@ const FormKegiatan = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRetryLocation = () => {
+    setLocationError(false);
+    Geolocation.getCurrentPosition(
+      async position => {
+        const {latitude, longitude} = position.coords;
+        await getAddressFromCoordinates(latitude, longitude);
+        setGps(`${latitude}, ${longitude}`);
+        setCoordinates({latitude, longitude});
+      },
+      error => {
+        console.error('Error mendapatkan lokasi:', error);
+        setGps('Gagal mendapatkan lokasi');
+        setLocationError(true);  // Set error jika gagal
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
   };
 
   useEffect(() => {
@@ -106,7 +126,7 @@ const FormKegiatan = () => {
         try {
           const existingData = await AsyncStorage.getItem('formData');
           const formArray = existingData ? JSON.parse(existingData) : [];
-          const agendaData = formArray.find(item => item.agendaId === agendaId);
+          const agendaData = formArray.find(item => item.agendaId === agendaId && item.userId === user.id);
 
           if (agendaData) {
             setDetail(agendaData.detail);
@@ -140,27 +160,14 @@ const FormKegiatan = () => {
     };
 
     fetchData();
+    handleRetryLocation();
 
-    Geolocation.getCurrentPosition(
-      async position => {
-        const {latitude, longitude} = position.coords;
-
-        await getAddressFromCoordinates(latitude, longitude);
-
-        setGps(`${latitude}, ${longitude}`);
-        setCoordinates({latitude, longitude});
-      },
-
-      error => {
-        console.error('Error mendapatkan lokasi:', error);
-        setGps('Gagal mendapatkan lokasi');
-      },
-      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-    );
+  
   }, []);
 
   const handleSubmit = async () => {
     const formData = {
+      userId: user.id,
       detail,
       gps,
       tanggal,
@@ -292,6 +299,12 @@ const FormKegiatan = () => {
           <Text style={styles.gpsText}>{gps}</Text>
         )}
       </View>
+
+      {locationError && ( // Tombol hanya muncul jika error
+        <TouchableOpacity style={{ marginTop: 10  }} onPress={handleRetryLocation}>
+          <Text style={{ fontSize: 16, color: 'black' }}>Ambil Lokasi Ulang</Text>
+        </TouchableOpacity>
+      )}
 
       {coordinates.latitude !== 0 && (
         <View style={styles.mapContainer}>

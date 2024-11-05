@@ -29,6 +29,7 @@ const GrupScreen = ({user, refresh}) => {
 
   const renderItem = ({item}) => {
     return (
+      
       <TouchableOpacity
         activeOpacity={0.9}
         onPress={() => handlePress(item)}

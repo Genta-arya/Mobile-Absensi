@@ -1,47 +1,110 @@
-import { View, Text, Dimensions } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import {View, Text, FlatList} from 'react-native';
+import React, {useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useAuthStore} from '../../Library/Zustand/AuthStore';
+import {useFocusEffect} from '@react-navigation/native';
 
 const TrackAbsensiForm = () => {
-  const [totalForms, setTotalForms] = useState(0);
-  const [filledForms, setFilledForms] = useState(0);
+  const [userForms, setUserForms] = useState([]);
+  const {user} = useAuthStore();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const existingData = await AsyncStorage.getItem('formData');
-      const formArray = existingData ? JSON.parse(existingData) : [];
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchData = async () => {
+        const existingData = await AsyncStorage.getItem('formData');
+        const formArray = existingData ? JSON.parse(existingData) : [];
 
-      // Total form yang ada
-      setTotalForms(formArray.length);
+        // Filter form yang sesuai dengan userId
+        const filteredForms = formArray.filter(
+          data => data.userId === user?.id,
+        );
+        setUserForms(filteredForms);
+      };
 
-      // Menghitung berapa banyak form yang sudah diisi
-      const filledCount = formArray.filter(data => 
-        data.detail && data.gps && data.tanggal && data.gambar1 && data.gambar2
-      ).length;
+      fetchData();
+    }, [user?.id]),
+  );
 
-      setFilledForms(filledCount);
-    };
+  const calculateFillPercentage = item => {
+    const fields = ['detail', 'gps', 'tanggal', 'gambar1', 'gambar2'];
+    const filledFields = fields.filter(field => item[field]);
+    return (filledFields.length / fields.length) * 100; // Persentase field yang sudah terisi
+  };
 
-    fetchData();
-  }, []);
+  const renderItem = ({item, index}) => {
+    const fillPercentage = calculateFillPercentage(item);
 
-  const fillPercentage = totalForms > 0 ? (filledForms / totalForms) * 100 : 0;
+    return (
+      <View style={{width: 200, marginRight: 10}}>
+        <Text style={{fontSize: 16, color: 'black', marginBottom: 5}}>
+          Absensi {index + 1} -{' '}
+          {fillPercentage === 100 ? 'Sudah Diisi' : 'Belum Lengkap'}
+        </Text>
+        <View
+          style={{
+            height: 20,
+            width: '100%',
+            backgroundColor: '#ddd',
+            borderRadius: 10,
+            overflow: 'hidden',
+          }}>
+          <View
+            style={{
+              height: '100%',
+              width: `${fillPercentage}%`,
+              backgroundColor: fillPercentage === 100 ? '#4CAF50' : '#FF5722',
+            }}
+          />
+        </View>
+        <Text style={{textAlign: 'right', fontSize: 12, color: 'black'}}>
+          {Math.round(fillPercentage)}%
+        </Text>
+      </View>
+    );
+  };
 
   return (
-    <View style={{ padding: 20 }}>
-      <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'black', marginBottom: 10 }}>
-        Tracking Absensi Form
-      </Text>
-      <Text style={{ fontSize: 16, color: 'black', marginBottom: 10 }}>
-        {filledForms} dari {totalForms} form sudah diisi
-      </Text>
-      <View style={{ height: 20, width: '100%', backgroundColor: '#ddd', borderRadius: 10, overflow: 'hidden' }}>
-        <View style={{ height: '100%', width: `${fillPercentage}%`, backgroundColor: '#4CAF50' }} />
-      </View>
-      <Text style={{ textAlign: 'right', marginTop: 5, fontWeight: 'bold', color: 'black' }}>
-        {Math.round(fillPercentage)}%
-      </Text>
-    </View>
+    userForms.length > 0 && (
+      <>
+        <View style={{padding: 1, marginTop: 20}}>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: 'bold',
+              color: 'black',
+              marginBottom: 10,
+            }}>
+            Absensi saya
+          </Text>
+
+          <FlatList
+            data={userForms}
+            renderItem={renderItem}
+            keyExtractor={(item, index) => index.toString()}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{paddingHorizontal: 5}}
+          />
+
+          <Text
+            style={{
+              textAlign: 'center',
+              marginTop: 20,
+              fontWeight: 'bold',
+              borderBottomWidth: 1,
+              paddingBottom: 5,
+              borderBottomColor: 'gray',
+              color: 'black',
+            }}>
+            {
+              userForms.filter(data => calculateFillPercentage(data) === 100)
+                .length
+            }{' '}
+            dari {userForms.length} form absensi sudah lengkap
+          </Text>
+        </View>
+      </>
+    )
   );
 };
 

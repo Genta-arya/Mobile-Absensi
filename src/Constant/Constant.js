@@ -4,8 +4,8 @@ import Empty from "../Assets/Image/empty.png"
 
 
 
-// export const API_URL = 'https://dev-absensi.hkks.shop/api/v1';
-export const API_URL = 'http://192.168.1.30:3008/api/v1';
+export const API_URL = 'https://dev-absensi.hkks.shop/api/v1';
+// export const API_URL = 'http://192.168.1.30:3008/api/v1';
 
 // export const API_URL = 'http://192.168.40.152:3008/api/v1';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';

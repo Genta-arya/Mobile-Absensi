@@ -1,4 +1,4 @@
-import {View, Text, FlatList, TouchableOpacity} from 'react-native';
+import {View, Text, FlatList, TouchableOpacity, TextInput} from 'react-native';
 import React, {useEffect, useState, useLayoutEffect} from 'react';
 import {
   useFocusEffect,
@@ -8,13 +8,15 @@ import {
 import {useAuthStore} from '../../Library/Zustand/AuthStore';
 import {getAgenda} from '../../Service/API/Agenda/Service_Agenda';
 import Container from '../../Components/Container';
-import {Colors} from '../../Constant/Constant';
+import {Colors, Icons} from '../../Constant/Constant';
 import useErrorHandler from '../../Hooks/useErrorHandler';
 import Loading from '../../Components/Loading';
 import CustomBottomSheet from '../../Components/BottomSheet';
 import DetailAgenda from './DetailAgenda';
 import useClaimAgenda from '../../Hooks/useClaimAgenda';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {faSearch} from '@fortawesome/free-solid-svg-icons';
 
 const AgendaScreen = () => {
   const route = useRoute();
@@ -25,6 +27,10 @@ const AgendaScreen = () => {
   const [visible, setVisible] = useState(false);
   const navigate = useNavigation();
   const [selectedAgenda, setSelectedAgenda] = useState(null);
+  const [dataAbsensi, setDataAbsensi] = useState([]);
+  const [kegiatanId, setKegiatanId] = useState(null);
+  const [filteredAgendas, setFilteredAgendas] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const HandleError = useErrorHandler();
   const {claim} = useClaimAgenda();
 
@@ -41,6 +47,14 @@ const AgendaScreen = () => {
 
       if (response && response.agendas) {
         setAgendas(response.agendas);
+        setFilteredAgendas(response.agendas); // Set filteredAgendas sama dengan agendas
+
+        const kegiatanIds = response.agendas
+          .filter(agenda => agenda.idUser === user.id)
+          .map(agenda => agenda.group.kegiatanId);
+
+        console.log('kegiatanId yang sesuai dengan user.id:', kegiatanIds);
+        setKegiatanId(kegiatanIds[0]);
       }
     } catch (error) {
       HandleError(error);
@@ -54,16 +68,25 @@ const AgendaScreen = () => {
     fetchData();
   }, []);
 
+  const handleSearch = query => {
+    setSearchQuery(query);
+    const filtered = agendas.filter(agenda =>
+      agenda.nama.toLowerCase().includes(query.toLowerCase()),
+    );
+    setFilteredAgendas(filtered); // Update hasil pencarian
+  };
   // Cek untuk menampilkan tombol kirim absensi
   const checkForAbsensiButton = async () => {
     const existingData = await AsyncStorage.getItem('formData');
     const formArray = existingData ? JSON.parse(existingData) : [];
 
-    // Cek apakah ada agendaId dan semua data tidak kosong
+    // Cek apakah ada agendaId dan semua data tidak kosong dan userId
     const shouldShow = agendas.some(agenda =>
       formArray.some(
         data =>
+          data.userId === user.id &&
           data.agendaId === agenda.id &&
+          data.kegiatanId === agenda.group.kegiatanId &&
           data.detail &&
           data.gps &&
           data.tanggal &&
@@ -71,13 +94,19 @@ const AgendaScreen = () => {
           data.gambar2,
       ),
     );
+
+    // masukan dataabsensi nya yang hanya kegiatanId yang sama
+    const filteredForms = formArray.filter(
+      data => data.kegiatanId === agendas[0].group.kegiatanId,
+    );
+    setDataAbsensi(filteredForms);
     setShowAbsensiButton(shouldShow);
   };
 
   useFocusEffect(
     React.useCallback(() => {
-      checkForAbsensiButton(); 
-    }, [agendas]) 
+      checkForAbsensiButton();
+    }, [agendas]),
   );
   if (loading) {
     return <Loading />;
@@ -90,7 +119,7 @@ const AgendaScreen = () => {
     }
   };
 
-  const renderAgendaItem = ({item}) => (
+  const renderAgendaItem = ({item , index}) => (
     <View
       style={{
         padding: 10,
@@ -111,11 +140,11 @@ const AgendaScreen = () => {
           }
         }}>
         <Text style={{fontWeight: 'bold', fontSize: 16, color: 'black'}}>
-          {item.nama}
+          {index + 1}. {item.nama}
         </Text>
       </TouchableOpacity>
 
-      { (
+      {
         <TouchableOpacity
           onPress={() => handleKegiatan(item)}
           disabled={item.status}
@@ -126,9 +155,9 @@ const AgendaScreen = () => {
                 : item.status
                 ? 'red'
                 : '#4CAF50',
-            padding: 10,
+            padding: 8,
             alignItems: 'center',
-            width: 110,
+            width: 120,
             borderRadius: 5,
           }}>
           <Text style={{color: 'white'}}>
@@ -137,7 +166,10 @@ const AgendaScreen = () => {
                 <TouchableOpacity
                   activeOpacity={0.9}
                   onPress={() =>
-                    navigate.navigate('Form', {agendaId: item.id})
+                    navigate.navigate('Form', {
+                      agendaId: item.id,
+                      kegiatanId: kegiatanId,
+                    })
                   }>
                   <Text style={{color: 'white'}}>Absensi Agenda</Text>
                 </TouchableOpacity>
@@ -149,36 +181,69 @@ const AgendaScreen = () => {
             )}
           </Text>
         </TouchableOpacity>
-      )}
+      }
     </View>
   );
 
   return (
     <>
       <Container>
+        <View style={{position: 'relative', marginBottom: 10}}>
+          <FontAwesomeIcon
+            icon={faSearch}
+            size={20}
+            color="#ccc"
+            style={{
+              position: 'absolute',
+              left: 10,
+              top: '50%',
+              transform: [{translateY: -10}], // Mengatur ikon berada di tengah vertikal
+            }}
+          />
+          <TextInput
+            style={{
+              padding: 10,
+              width: '100%',
+              paddingLeft: 40, // Memberi jarak untuk ikon di sebelah kiri
+              borderWidth: 1,
+              borderColor: '#ddd',
+              borderRadius: 5,
+            }}
+            placeholder="Cari agenda..."
+            value={searchQuery}
+            onChangeText={handleSearch}
+          />
+        </View>
+
         <FlatList
-          data={agendas}
+          data={filteredAgendas}
           renderItem={renderAgendaItem}
           keyExtractor={item => item.id}
           ListEmptyComponent={
             <Text style={{textAlign: 'center', color: 'black'}}>
-              No agenda found.
+              Agenda tidak ditemukan
             </Text>
           }
         />
         {showAbsensiButton && (
           <TouchableOpacity
+            activeOpacity={0.9}
             style={{
               backgroundColor: Colors.green,
               padding: 15,
-              borderRadius: 5,
+              borderRadius: 15,
+              width: '100%',
               alignItems: 'center',
-              margin: 20,
+              marginTop: 20,
             }}
-            onPress={() => navigate.navigate('KirimAbsensi')}>
-            <Text style={{color: 'white', fontWeight: 'bold'}}>
-              Kirim Absensi
-            </Text>
+            onPress={() => console.log('Data absensi', dataAbsensi)}>
+            <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+              <Icons.FontAwesome5 name="file" size={20} color="white" />
+
+              <Text style={{color: 'white', fontWeight: 'bold'}}>
+                Kirim Absensi
+              </Text>
+            </View>
           </TouchableOpacity>
         )}
       </Container>

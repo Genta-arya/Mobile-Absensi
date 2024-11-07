@@ -47,7 +47,9 @@ const FormKegiatan = () => {
   const {user} = useAuthStore();
   const [locationError, setLocationError] = useState(false);
   // Mengambil agendaId dari params
-  const {agendaId} = route.params;
+  const {agendaId , kegiatanId} = route.params;
+
+
 
   const getAddressFromCoordinates = async (latitude, longitude) => {
     setLoading(true);
@@ -174,6 +176,7 @@ const FormKegiatan = () => {
       gambar1,
       gambar2,
       agendaId,
+      kegiatanId
     };
 
     try {

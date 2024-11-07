@@ -9,6 +9,7 @@ const Container = ({props, children}) => {
       colors={['#f5f5f5', '#eaeaea', '#ffffff']}
       style={{
         flex: 1,
+        position: 'relative',
 
         padding: 15,
         borderTopColor: 'gray',

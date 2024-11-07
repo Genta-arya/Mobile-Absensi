@@ -5,9 +5,8 @@ import {
   TouchableOpacity,
   Alert,
   Modal,
-  TextInput,
-  StatusBar,
   Linking,
+  StatusBar,
 } from 'react-native';
 import React, {useState} from 'react';
 import {useAuthStore} from '../../Library/Zustand/AuthStore';
@@ -18,25 +17,24 @@ import {requestCameraPermission} from '../../Library/Permisions/CameraPermission
 import {useModalStore} from '../../Library/Zustand/modalStore';
 import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import {
-  updateAvatar,
-  updateProfile,
-} from '../../Service/API/Profile/service_Profile';
 import {showMessage} from 'react-native-flash-message';
-import ModalProfile from './component/ModalProfile';
 import {HandleLogout} from '../../Service/API/Authentikasi/Service_Authentikasi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import useErrorHandler from '../../Hooks/useErrorHandler';
+import ModalProfile from './component/ModalProfile';
 
 const ProfileScreen = () => {
   const {user, setUser} = useAuthStore();
   const navigate = useNavigation();
   const {onOpen, onClose, isOpen} = useModalStore();
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalAvatar, setModalAvatar] = useState(false);
   const [nama, setNama] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
+  const [previewImage, setPreviewImage] = useState(null); // Untuk menampung gambar preview
   const handleError = useErrorHandler();
+
   const handleImagePick = async () => {
     const hasPermission = await requestCameraPermission();
     if (!hasPermission) {
@@ -91,6 +89,13 @@ const ProfileScreen = () => {
           },
         },
         {
+          text: 'Lihat',
+          onPress: () => {
+            setPreviewImage(user?.avatar); // Menampilkan gambar avatar saat tombol Lihat ditekan
+            setModalAvatar(true); // Buka modal untuk preview gambar
+          },
+        },
+        {
           text: 'Batal',
           style: 'cancel',
         },
@@ -106,40 +111,7 @@ const ProfileScreen = () => {
       console.log('ImagePicker Error: ', response.error);
     } else if (response.assets && response.assets.length > 0) {
       const source = {uri: response.assets[0].uri};
-
-      // Membuat FormData untuk mengirim file
-      const formData = new FormData();
-      formData.append('file', {
-        uri: source.uri,
-        type: response.assets[0].type,
-        name: response.assets[0].fileName,
-      });
-
-      try {
-        // Panggil fungsi updateAvatar dari service
-        const result = await updateAvatar(user.id, formData);
-
-
-
-        if (result.message === 'Avatar updated successfully.') {
-          showMessage({
-            message: 'Avatar berhasil diperbarui!',
-            type: 'success',
-            icon: 'success',
-          });
-
-          // Perbarui user dengan avatar baru
-          setUser({...user, avatar: source.uri});
-        } else {
-          showMessage({
-            message: 'Gagal memperbarui avatar. Silakan coba lagi.',
-            type: 'danger',
-            icon: 'danger',
-          });
-        }
-      } catch (error) {
-        handleError(error, '*');
-      }
+      setPreviewImage(source.uri); // Set image preview setelah memilih foto
     } else {
       console.log('No image was selected');
     }
@@ -159,10 +131,9 @@ const ProfileScreen = () => {
       navigate.reset({
         index: 0,
         routes: [{name: 'Login'}],
-      })
+      });
     } catch (error) {
       handleError(error, '*');
-      
     }
   };
 
@@ -306,7 +277,7 @@ const ProfileScreen = () => {
         </Text>
       </TouchableOpacity>
 
-      {/* Modal Edit Profil */}
+      {/* Modal untuk Preview Gambar */}
       <ModalProfile
         email={email}
         name={nama}
@@ -318,6 +289,48 @@ const ProfileScreen = () => {
         setEmail={setEmail}
         setNama={setNama}
       />
+      <Modal
+        visible={modalAvatar}
+        onRequestClose={() => setModalAvatar(false)}
+        transparent={true}
+        animationType="fade">
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.7)', // Latar belakang semi transparan
+          }}>
+          <StatusBar
+            backgroundColor="rgba(0, 0, 0, 0.7)"
+            barStyle="light-content"
+          />
+          {/* Area untuk menutup modal ketika area luar ditekan */}
+          <TouchableOpacity
+            style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0}}
+            activeOpacity={1}
+            onPress={() => setModalAvatar(false)} // Menutup modal saat ditekan
+          />
+          <View
+            style={{
+              backgroundColor: '#fff',
+              padding: 1,
+              borderRadius: 10,
+              width: '80%', // Atur lebar modal agar tidak terlalu lebar
+              maxWidth: 350, // Atur lebar maksimal modal
+              alignItems: 'center', // Agar gambar berada di tengah
+            }}>
+            <Image
+              source={{uri: previewImage}}
+              style={{
+                width: '100%', // Sesuaikan lebar gambar dengan lebar modal
+                height: 400, // Tentukan tinggi gambar
+                borderRadius: 10,
+              }}
+            />
+          </View>
+        </View>
+      </Modal>
     </Container>
   );
 };

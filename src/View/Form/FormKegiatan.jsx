@@ -22,8 +22,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useRoute} from '@react-navigation/native';
 import {showMessage} from 'react-native-flash-message';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faCamera, faImage} from '@fortawesome/free-solid-svg-icons';
-import { useAuthStore } from '../../Library/Zustand/AuthStore';
+import {faCamera, faImage, faSave} from '@fortawesome/free-solid-svg-icons';
+import {useAuthStore} from '../../Library/Zustand/AuthStore';
 
 const FormKegiatan = () => {
   const {
@@ -46,10 +46,8 @@ const FormKegiatan = () => {
   const route = useRoute();
   const {user} = useAuthStore();
   const [locationError, setLocationError] = useState(false);
-  // Mengambil agendaId dari params
-  const {agendaId , kegiatanId} = route.params;
 
-
+  const {agendaId, kegiatanId, name} = route.params;
 
   const getAddressFromCoordinates = async (latitude, longitude) => {
     setLoading(true);
@@ -91,7 +89,7 @@ const FormKegiatan = () => {
       error => {
         console.error('Error mendapatkan lokasi:', error);
         setGps('Gagal mendapatkan lokasi');
-        setLocationError(true);  // Set error jika gagal
+        setLocationError(true); // Set error jika gagal
       },
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
@@ -128,7 +126,9 @@ const FormKegiatan = () => {
         try {
           const existingData = await AsyncStorage.getItem('formData');
           const formArray = existingData ? JSON.parse(existingData) : [];
-          const agendaData = formArray.find(item => item.agendaId === agendaId && item.userId === user.id);
+          const agendaData = formArray.find(
+            item => item.agendaId === agendaId && item.userId === user.id,
+          );
 
           if (agendaData) {
             setDetail(agendaData.detail);
@@ -136,7 +136,7 @@ const FormKegiatan = () => {
             setTanggal(agendaData.tanggal);
             setGambar1(agendaData.gambar1);
             setGambar2(agendaData.gambar2);
-            // Ambil koordinat dari gps jika ada
+
             if (agendaData.gps) {
               const [lat, long] = agendaData.gps.split(', ');
               setCoordinates({
@@ -149,7 +149,6 @@ const FormKegiatan = () => {
               );
             }
           } else {
-            // set state null jika agendaId beda
             setDetail(null);
 
             setGambar1(null);
@@ -163,8 +162,6 @@ const FormKegiatan = () => {
 
     fetchData();
     handleRetryLocation();
-
-  
   }, []);
 
   const handleSubmit = async () => {
@@ -176,7 +173,8 @@ const FormKegiatan = () => {
       gambar1,
       gambar2,
       agendaId,
-      kegiatanId
+      kegiatanId,
+      name,
     };
 
     try {
@@ -304,8 +302,8 @@ const FormKegiatan = () => {
       </View>
 
       {locationError && ( // Tombol hanya muncul jika error
-        <TouchableOpacity style={{ marginTop: 10  }} onPress={handleRetryLocation}>
-          <Text style={{ fontSize: 16, color: 'black' }}>Ambil Lokasi Ulang</Text>
+        <TouchableOpacity style={{marginTop: 10}} onPress={handleRetryLocation}>
+          <Text style={{fontSize: 16, color: 'black'}}>Ambil Lokasi Ulang</Text>
         </TouchableOpacity>
       )}
 
@@ -387,7 +385,24 @@ const FormKegiatan = () => {
       ))}
 
       <View style={{paddingBottom: 50}}>
-        <Button title="Simpan" onPress={handleSubmit} color="#4CAF50" />
+        <TouchableOpacity
+          onPress={handleSubmit}
+          style={{
+            backgroundColor: '#4CAF50',
+            padding: 10,
+            borderRadius: 10,
+          }}>
+          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+            <FontAwesomeIcon
+              icon={faSave}
+              size={20}
+              color={Colors.white}
+              style={{marginRight: 10}}
+            />
+
+            <Text style={{color: 'white', textAlign: 'center'}}>Simpan</Text>
+          </View>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );

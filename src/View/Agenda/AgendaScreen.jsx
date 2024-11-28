@@ -119,7 +119,7 @@ const AgendaScreen = () => {
     }
   };
 
-  const renderAgendaItem = ({item , index}) => (
+  const renderAgendaItem = ({item, index}) => (
     <View
       style={{
         padding: 10,
@@ -146,8 +146,16 @@ const AgendaScreen = () => {
 
       {
         <TouchableOpacity
-          onPress={() => handleKegiatan(item)}
-          disabled={item.status}
+          onPress={() => {
+            item.idUser === user.id
+              ? navigate.navigate('Form', {
+                  agendaId: item.id,
+                  kegiatanId: kegiatanId,
+                  name: item.nama,
+                })
+              : handleKegiatan(item);
+          }}
+          activeOpacity={0.9}
           style={{
             backgroundColor:
               item.idUser === user.id
@@ -162,18 +170,7 @@ const AgendaScreen = () => {
           }}>
           <Text style={{color: 'white'}}>
             {item.idUser === user.id ? (
-              <View>
-                <TouchableOpacity
-                  activeOpacity={0.9}
-                  onPress={() =>
-                    navigate.navigate('Form', {
-                      agendaId: item.id,
-                      kegiatanId: kegiatanId,
-                    })
-                  }>
-                  <Text style={{color: 'white'}}>Absensi Agenda</Text>
-                </TouchableOpacity>
-              </View>
+              <Text style={{color: 'white'}}>Lihat</Text>
             ) : item.status ? (
               'Sudah Diambil'
             ) : (
@@ -225,27 +222,6 @@ const AgendaScreen = () => {
             </Text>
           }
         />
-        {showAbsensiButton && (
-          <TouchableOpacity
-            activeOpacity={0.9}
-            style={{
-              backgroundColor: Colors.green,
-              padding: 15,
-              borderRadius: 15,
-              width: '100%',
-              alignItems: 'center',
-              marginTop: 20,
-            }}
-            onPress={() => console.log('Data absensi', dataAbsensi)}>
-            <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
-              <Icons.FontAwesome5 name="file" size={20} color="white" />
-
-              <Text style={{color: 'white', fontWeight: 'bold'}}>
-                Kirim Absensi
-              </Text>
-            </View>
-          </TouchableOpacity>
-        )}
       </Container>
       {visible && (
         <View style={{position: 'absolute', bottom: 0, width: '100%'}}>

@@ -9,7 +9,7 @@ import useUserStore from '../Library/Zustand/SessionStore';
 import useErrorHandler from './useErrorHandler';
 
 const useCheckLogin = () => {
-  const [loading, setLoading] = useState(false);
+
   const {user, setUser} = useAuthStore();
   const route = useRoute();
   const navigation = useNavigation();

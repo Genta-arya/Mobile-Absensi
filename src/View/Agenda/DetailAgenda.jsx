@@ -11,8 +11,8 @@ const DetailAgenda = ({selectedAgenda}) => {
           color: '#333',
           marginBottom: 8,
           borderBottomWidth: 1,
-          borderBottomColor: '#ddd', // Border bawah untuk nama
-          paddingBottom: 4, // Jarak antara teks dan border
+          borderBottomColor: '#ddd', 
+          paddingBottom: 4, 
         }}>
         {selectedAgenda.nama}
       </Text>
@@ -22,8 +22,8 @@ const DetailAgenda = ({selectedAgenda}) => {
           color: '#666',
           marginBottom: 8,
           borderBottomWidth: 1,
-          borderBottomColor: '#ddd', // Border bawah untuk grup
-          paddingBottom: 4, // Jarak antara teks dan border
+          borderBottomColor: '#ddd', 
+          paddingBottom: 4, 
         }}>
         {selectedAgenda.group?.nama_grup || 'Tidak ada grup.'}
       </Text>
@@ -33,8 +33,8 @@ const DetailAgenda = ({selectedAgenda}) => {
           color: '#333',
           marginBottom: 8,
           borderBottomWidth: 1,
-          borderBottomColor: '#ddd', // Border bawah untuk deskripsi
-          paddingBottom: 4, // Jarak antara teks dan border
+          borderBottomColor: '#ddd', 
+          paddingBottom: 4, 
         }}>
         Deskripsi: {'\n'}{selectedAgenda.deskripsi || '-'}
       </Text>

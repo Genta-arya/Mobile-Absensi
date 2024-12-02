@@ -33,9 +33,7 @@ const AgendaScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const HandleError = useErrorHandler();
   const {claim} = useClaimAgenda();
-
-  // State untuk menampilkan tombol kirim absensi
-  const [showAbsensiButton, setShowAbsensiButton] = useState(false);
+  const [expired, setExpired] = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
@@ -47,7 +45,8 @@ const AgendaScreen = () => {
 
       if (response && response.agendas) {
         setAgendas(response.agendas);
-        setFilteredAgendas(response.agendas); // Set filteredAgendas sama dengan agendas
+        setExpired(response.expired);
+        setFilteredAgendas(response.agendas);
 
         const kegiatanIds = response.agendas
           .filter(agenda => agenda.idUser === user.id)
@@ -63,51 +62,20 @@ const AgendaScreen = () => {
     }
   };
 
-  // Gunakan useEffect untuk memanggil fetchData saat komponen dimuat
   useEffect(() => {
     fetchData();
   }, []);
+
+  console.log('Agendas:', expired);
 
   const handleSearch = query => {
     setSearchQuery(query);
     const filtered = agendas.filter(agenda =>
       agenda.nama.toLowerCase().includes(query.toLowerCase()),
     );
-    setFilteredAgendas(filtered); // Update hasil pencarian
-  };
-  // Cek untuk menampilkan tombol kirim absensi
-  const checkForAbsensiButton = async () => {
-    const existingData = await AsyncStorage.getItem('formData');
-    const formArray = existingData ? JSON.parse(existingData) : [];
-
-    // Cek apakah ada agendaId dan semua data tidak kosong dan userId
-    const shouldShow = agendas.some(agenda =>
-      formArray.some(
-        data =>
-          data.userId === user.id &&
-          data.agendaId === agenda.id &&
-          data.kegiatanId === agenda.group.kegiatanId &&
-          data.detail &&
-          data.gps &&
-          data.tanggal &&
-          data.gambar1 &&
-          data.gambar2,
-      ),
-    );
-
-    // masukan dataabsensi nya yang hanya kegiatanId yang sama
-    const filteredForms = formArray.filter(
-      data => data.kegiatanId === agendas[0].group.kegiatanId,
-    );
-    setDataAbsensi(filteredForms);
-    setShowAbsensiButton(shouldShow);
+    setFilteredAgendas(filtered);
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      checkForAbsensiButton();
-    }, [agendas]),
-  );
   if (loading) {
     return <Loading />;
   }
@@ -143,42 +111,56 @@ const AgendaScreen = () => {
           {index + 1}. {item.nama}
         </Text>
       </TouchableOpacity>
-
-      {
-        <TouchableOpacity
-          onPress={() => {
-            item.idUser === user.id
-              ? navigate.navigate('Form', {
-                  agendaId: item.id,
-                  kegiatanId: kegiatanId,
-                  name: item.nama,
-                })
-              : handleKegiatan(item);
-          }}
-          activeOpacity={0.9}
+      {!expired ? (
+        <>
+          {
+            <TouchableOpacity
+              onPress={() => {
+                item.idUser === user.id
+                  ? navigate.navigate('Form', {
+                      agendaId: item.id,
+                      kegiatanId: kegiatanId,
+                      name: item.nama,
+                    })
+                  : handleKegiatan(item);
+              }}
+              activeOpacity={0.9}
+              style={{
+                backgroundColor:
+                  item.idUser === user.id
+                    ? '#37AFE1'
+                    : item.status
+                    ? 'red'
+                    : '#4CAF50',
+                padding: 8,
+                alignItems: 'center',
+                width: 120,
+                borderRadius: 5,
+              }}>
+              <Text style={{color: 'white'}}>
+                {item.idUser === user.id ? (
+                  <Text style={{color: 'white'}}>Lihat</Text>
+                ) : item.status ? (
+                  'Sudah Diambil'
+                ) : (
+                  'Ambil Agenda'
+                )}
+              </Text>
+            </TouchableOpacity>
+          }
+        </>
+      ) : (
+        <View
           style={{
-            backgroundColor:
-              item.idUser === user.id
-                ? '#37AFE1'
-                : item.status
-                ? 'red'
-                : '#4CAF50',
-            padding: 8,
+            backgroundColor: 'green',
+            padding: 7,
             alignItems: 'center',
-            width: 120,
+            width: 100,
             borderRadius: 5,
           }}>
-          <Text style={{color: 'white'}}>
-            {item.idUser === user.id ? (
-              <Text style={{color: 'white'}}>Lihat</Text>
-            ) : item.status ? (
-              'Sudah Diambil'
-            ) : (
-              'Ambil Agenda'
-            )}
-          </Text>
-        </TouchableOpacity>
-      }
+          <Text style={{color: 'white'}}>Agenda selesai</Text>
+        </View>
+      )}
     </View>
   );
 
@@ -194,7 +176,7 @@ const AgendaScreen = () => {
               position: 'absolute',
               left: 10,
               top: '50%',
-              transform: [{translateY: -10}], // Mengatur ikon berada di tengah vertikal
+              transform: [{translateY: -10}],
             }}
           />
           <TextInput
@@ -204,9 +186,11 @@ const AgendaScreen = () => {
               paddingLeft: 40, // Memberi jarak untuk ikon di sebelah kiri
               borderWidth: 1,
               borderColor: '#ddd',
+              color: '#333',
               borderRadius: 5,
             }}
             placeholder="Cari agenda..."
+            placeholderTextColor="#ccc"
             value={searchQuery}
             onChangeText={handleSearch}
           />

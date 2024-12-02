@@ -36,13 +36,51 @@ const TrackAbsensiForm = () => {
   };
 
   // Handle Submit Function
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const completedForms = userForms.filter(
       data => calculateFillPercentage(data) === 100,
     );
-
-    // Log completed forms to the console
+  
     console.log('Data Absensi Lengkap:', completedForms);
+  
+    // Kirim setiap form dengan file
+    for (const form of completedForms) {
+      const formData = new FormData();
+      formData.append('agendaId', form.agendaId);
+      formData.append('kegiatanId', form.kegiatanId);
+      formData.append('gps', form.gps);
+      formData.append('detail', form.detail);
+      formData.append('tanggal', form.tanggal);
+      formData.append('userId', form.userId);
+      formData.append('name', form.name);
+  
+      // Tambahkan file (gambar1 dan gambar2)
+      formData.append('files', {
+        uri: form.gambar1,
+        type: 'image/jpeg',
+        name: 'gambar1.jpg',
+      });
+      formData.append('files', {
+        uri: form.gambar2,
+        type: 'image/jpeg',
+        name: 'gambar2.jpg',
+      });
+  
+      try {
+        const response = await fetch('http://192.168.1.31:3008/api/v1/upload/form', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data', // Jangan lupa ini
+          },
+        });
+  
+        const result = await response.json();
+        console.log('Hasil unggahan:', form.tanggal);
+      } catch (error) {
+        console.error('Error saat mengunggah:', error);
+      }
+    }
   };
 
   const renderItem = ({item}) => {

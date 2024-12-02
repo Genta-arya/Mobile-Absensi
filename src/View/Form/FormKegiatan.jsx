@@ -56,7 +56,7 @@ const FormKegiatan = () => {
         `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
         {
           headers: {
-            'User-Agent': 'YourAppName/1.0 (your.email@example.com)', // Ganti dengan nama aplikasi dan email kamu
+            'User-Agent': 'YourAppName/1.0 (your.email@example.com)',
           },
         },
       );
@@ -89,7 +89,10 @@ const FormKegiatan = () => {
       error => {
         console.error('Error mendapatkan lokasi:', error);
         setGps('Gagal mendapatkan lokasi');
-        setLocationError(true); // Set error jika gagal
+        // jika gagal retry lagi
+        handleRetryLocation();
+        // set error jika gagal
+        setLocationError(true);
       },
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
@@ -120,7 +123,6 @@ const FormKegiatan = () => {
       ],
     );
 
-    // Cek agendaId dan ambil data dari localStorage
     const fetchData = async () => {
       if (agendaId) {
         try {
@@ -178,26 +180,20 @@ const FormKegiatan = () => {
     };
 
     try {
-      // Membaca data yang sudah ada di localStorage
       const existingData = await AsyncStorage.getItem('formData');
       const formArray = existingData ? JSON.parse(existingData) : [];
 
-      // Jika agendaId ada, kita perlu memperbarui data yang ada
       if (agendaId) {
         const index = formArray.findIndex(item => item.agendaId === agendaId);
         if (index !== -1) {
-          // Update data yang ada
           formArray[index] = formData;
         } else {
-          // Jika agendaId tidak ditemukan, tambahkan data baru
           formArray.push(formData);
         }
       } else {
-        // Jika tidak ada agendaId, tambahkan data baru
         formArray.push(formData);
       }
 
-      // Menyimpan kembali ke localStorage
       await AsyncStorage.setItem('formData', JSON.stringify(formArray));
       showMessage({
         message: 'Form berhasil disimpan',
@@ -347,7 +343,7 @@ const FormKegiatan = () => {
 
       {Array.from({length: 2}, (_, index) => (
         <View key={index} style={styles.imageSection}>
-          <Text style={styles.label}>Gambar {index + 1}</Text>
+          <Text style={styles.label}>Bukti kegiatan ( {index + 1} )</Text>
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               onPress={() =>
@@ -392,7 +388,12 @@ const FormKegiatan = () => {
             padding: 10,
             borderRadius: 10,
           }}>
-          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
             <FontAwesomeIcon
               icon={faSave}
               size={20}

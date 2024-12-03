@@ -85,13 +85,12 @@ const FormKegiatan = () => {
         await getAddressFromCoordinates(latitude, longitude);
         setGps(`${latitude}, ${longitude}`);
         setCoordinates({latitude, longitude});
+        setLocationError(false);
       },
       error => {
         console.error('Error mendapatkan lokasi:', error);
         setGps('Gagal mendapatkan lokasi');
-        // jika gagal retry lagi
-        handleRetryLocation();
-        // set error jika gagal
+
         setLocationError(true);
       },
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
@@ -298,12 +297,28 @@ const FormKegiatan = () => {
       </View>
 
       {locationError && ( // Tombol hanya muncul jika error
-        <TouchableOpacity style={{marginTop: 10}} onPress={handleRetryLocation}>
-          <Text style={{fontSize: 16, color: 'black'}}>Ambil Lokasi Ulang</Text>
+        <TouchableOpacity
+          style={{
+            marginTop: 10,
+            marginBottom: 10,
+            backgroundColor: Colors.green,
+            padding: 10,
+            borderRadius: 10,
+          }}
+          onPress={handleRetryLocation}>
+          <Text
+            style={{
+              fontSize: 16,
+              color: 'white',
+              fontWeight: 'bold',
+              textAlign: 'center',
+            }}>
+            {locationError ? 'Ambil Lokasi Ulang' : 'Loading...'}
+          </Text>
         </TouchableOpacity>
       )}
 
-      {coordinates.latitude !== 0 && (
+      {coordinates.latitude !== 0 && locationError === false && (
         <View style={styles.mapContainer}>
           <MapView
             style={styles.map}
@@ -379,32 +394,33 @@ const FormKegiatan = () => {
           {index === 1 && gambar2 && renderImageWithCoordinates(gambar2)}
         </View>
       ))}
-
-      <View style={{paddingBottom: 50}}>
-        <TouchableOpacity
-          onPress={handleSubmit}
-          style={{
-            backgroundColor: '#4CAF50',
-            padding: 10,
-            borderRadius: 10,
-          }}>
-          <View
+      {gps && (
+        <View style={{paddingBottom: 50}}>
+          <TouchableOpacity
+            onPress={handleSubmit}
             style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
+              backgroundColor: '#4CAF50',
+              padding: 10,
+              borderRadius: 10,
             }}>
-            <FontAwesomeIcon
-              icon={faSave}
-              size={20}
-              color={Colors.white}
-              style={{marginRight: 10}}
-            />
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <FontAwesomeIcon
+                icon={faSave}
+                size={20}
+                color={Colors.white}
+                style={{marginRight: 10}}
+              />
 
-            <Text style={{color: 'white', textAlign: 'center'}}>Simpan</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+              <Text style={{color: 'white', textAlign: 'center'}}>Simpan</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      )}
     </ScrollView>
   );
 };
@@ -417,12 +433,14 @@ const styles = StyleSheet.create({
   label: {
     color: '#333',
     marginBottom: 5,
+
     fontSize: 16,
   },
   textInput: {
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
+
     padding: 10,
     marginBottom: 10,
     color: '#333',
@@ -443,6 +461,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#ccc',
     marginBottom: 10,
+    paddingLeft: 10,
     color: '#333',
     backgroundColor: '#fff',
   },

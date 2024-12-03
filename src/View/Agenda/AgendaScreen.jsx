@@ -48,6 +48,8 @@ const AgendaScreen = () => {
         setExpired(response.expired);
         setFilteredAgendas(response.agendas);
 
+        console.log('agendas:', response.agendas);
+
         const kegiatanIds = response.agendas
           .filter(agenda => agenda.idUser === user.id)
           .map(agenda => agenda.group.kegiatanId);
@@ -66,7 +68,7 @@ const AgendaScreen = () => {
     fetchData();
   }, []);
 
-  console.log('Agendas:', expired);
+
 
   const handleSearch = query => {
     setSearchQuery(query);

@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useAuthStore} from '../../Library/Zustand/AuthStore';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {API_URL} from '../../Constant/Constant';
 
 const TrackAbsensiForm = () => {
   const [userForms, setUserForms] = useState([]);
@@ -35,26 +36,71 @@ const TrackAbsensiForm = () => {
     navigation.navigate('Form', {agendaId, kegiatanId, name});
   };
 
-  // Handle Submit Function
+  // const handleSubmit = async () => {
+  //   const completedForms = userForms.filter(
+  //     data => calculateFillPercentage(data) === 100,
+  //   );
+
+  //   for (const form of completedForms) {
+  //     const formData = new FormData();
+  //     formData.append('agendaId', form.agendaId);
+  //     formData.append('kegiatanId', form.kegiatanId);
+  //     formData.append('gps', form.gps);
+  //     formData.append('detail', form.detail);
+  //     formData.append('tanggal', form.tanggal);
+  //     formData.append('userId', form.userId);
+  //     formData.append('name', form.name);
+
+  //     formData.append('files', {
+  //       uri: form.gambar1,
+  //       type: 'image/jpeg',
+  //       name: 'gambar1.jpg',
+  //     });
+  //     formData.append('files', {
+  //       uri: form.gambar2,
+  //       type: 'image/jpeg',
+  //       name: 'gambar2.jpg',
+  //     });
+
+  //     try {
+  //       const response = await fetch(`${API_URL}/upload/form`, {
+  //         method: 'POST',
+  //         body: formData,
+  //         headers: {
+  //           'Content-Type': 'multipart/form-data',
+  //         },
+  //       });
+
+  //       const result = await response.json();
+  //       console.log('Hasil unggahan:', result);
+  //     } catch (error) {
+  //       console.error('Error saat mengunggah:', error);
+  //     }
+  //   }
+  // };
+
+
+
   const handleSubmit = async () => {
-    const completedForms = userForms.filter(
-      data => calculateFillPercentage(data) === 100,
+    const completedForms = userForms.filter(data => calculateFillPercentage(data) === 100);
+  
+    const formData = new FormData();
+    formData.append(
+      "forms", 
+      JSON.stringify(
+        completedForms.map(form => ({
+          agendaId: form.agendaId,
+          kegiatanId: form.kegiatanId,
+          gps: form.gps,
+          detail: form.detail,
+          tanggal: form.tanggal, // Pastikan format tanggal
+          userId: form.userId
+        }))
+      )
     );
   
-    console.log('Data Absensi Lengkap:', completedForms);
-  
-    // Kirim setiap form dengan file
-    for (const form of completedForms) {
-      const formData = new FormData();
-      formData.append('agendaId', form.agendaId);
-      formData.append('kegiatanId', form.kegiatanId);
-      formData.append('gps', form.gps);
-      formData.append('detail', form.detail);
-      formData.append('tanggal', form.tanggal);
-      formData.append('userId', form.userId);
-      formData.append('name', form.name);
-  
-      // Tambahkan file (gambar1 dan gambar2)
+    // Menambahkan file-file yang relevan ke FormData
+    completedForms.forEach((form) => {
       formData.append('files', {
         uri: form.gambar1,
         type: 'image/jpeg',
@@ -65,23 +111,27 @@ const TrackAbsensiForm = () => {
         type: 'image/jpeg',
         name: 'gambar2.jpg',
       });
+    });
   
-      try {
-        const response = await fetch('http://192.168.1.31:3008/api/v1/upload/form', {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'Content-Type': 'multipart/form-data', // Jangan lupa ini
-          },
-        });
+    try {
+      const response = await fetch(`${API_URL}/upload/form`, {
+        method: "POST",
+        body: formData,
+       
+      
+      });
   
-        const result = await response.json();
-        console.log('Hasil unggahan:', form.tanggal);
-      } catch (error) {
-        console.error('Error saat mengunggah:', error);
-      }
+      const result = await response.json();
+      console.log("Hasil unggahan:", result);
+    } catch (error) {
+      console.error("Error saat mengunggah:", error);
     }
   };
+  
+
+
+
+
 
   const renderItem = ({item}) => {
     const fillPercentage = calculateFillPercentage(item);
@@ -171,7 +221,7 @@ const TrackAbsensiForm = () => {
                 borderBottomColor: 'gray',
               }}>
               <TouchableOpacity
-                activeOpacity={0.9}
+             
                 onPress={handleSubmit} // Attach the handleSubmit function here
                 style={{
                   backgroundColor: 'white',

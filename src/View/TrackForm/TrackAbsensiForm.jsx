@@ -36,71 +36,27 @@ const TrackAbsensiForm = () => {
     navigation.navigate('Form', {agendaId, kegiatanId, name});
   };
 
-  // const handleSubmit = async () => {
-  //   const completedForms = userForms.filter(
-  //     data => calculateFillPercentage(data) === 100,
-  //   );
-
-  //   for (const form of completedForms) {
-  //     const formData = new FormData();
-  //     formData.append('agendaId', form.agendaId);
-  //     formData.append('kegiatanId', form.kegiatanId);
-  //     formData.append('gps', form.gps);
-  //     formData.append('detail', form.detail);
-  //     formData.append('tanggal', form.tanggal);
-  //     formData.append('userId', form.userId);
-  //     formData.append('name', form.name);
-
-  //     formData.append('files', {
-  //       uri: form.gambar1,
-  //       type: 'image/jpeg',
-  //       name: 'gambar1.jpg',
-  //     });
-  //     formData.append('files', {
-  //       uri: form.gambar2,
-  //       type: 'image/jpeg',
-  //       name: 'gambar2.jpg',
-  //     });
-
-  //     try {
-  //       const response = await fetch(`${API_URL}/upload/form`, {
-  //         method: 'POST',
-  //         body: formData,
-  //         headers: {
-  //           'Content-Type': 'multipart/form-data',
-  //         },
-  //       });
-
-  //       const result = await response.json();
-  //       console.log('Hasil unggahan:', result);
-  //     } catch (error) {
-  //       console.error('Error saat mengunggah:', error);
-  //     }
-  //   }
-  // };
-
-
-
   const handleSubmit = async () => {
-    const completedForms = userForms.filter(data => calculateFillPercentage(data) === 100);
-  
+    const completedForms = userForms.filter(
+      data => calculateFillPercentage(data) === 100,
+    );
+
     const formData = new FormData();
     formData.append(
-      "forms", 
+      'forms',
       JSON.stringify(
         completedForms.map(form => ({
           agendaId: form.agendaId,
           kegiatanId: form.kegiatanId,
           gps: form.gps,
           detail: form.detail,
-          tanggal: form.tanggal, // Pastikan format tanggal
-          userId: form.userId
-        }))
-      )
+          tanggal: form.tanggal,
+          userId: form.userId,
+        })),
+      ),
     );
-  
-    // Menambahkan file-file yang relevan ke FormData
-    completedForms.forEach((form) => {
+
+    completedForms.forEach(form => {
       formData.append('files', {
         uri: form.gambar1,
         type: 'image/jpeg',
@@ -112,26 +68,36 @@ const TrackAbsensiForm = () => {
         name: 'gambar2.jpg',
       });
     });
-  
+
     try {
       const response = await fetch(`${API_URL}/upload/form`, {
-        method: "POST",
+        method: 'POST',
         body: formData,
-       
-      
       });
-  
+
       const result = await response.json();
-      console.log("Hasil unggahan:", result);
+      console.log('Hasil unggahan:', result);
+
+      const uploadedIds = result.data;
+
+      if (uploadedIds && uploadedIds.length > 0) {
+        const existingData = await AsyncStorage.getItem('formData');
+        const formArray = existingData ? JSON.parse(existingData) : [];
+
+        const filteredForms = formArray.filter(
+          form => !uploadedIds.includes(form.agendaId),
+        );
+
+        await AsyncStorage.setItem('formData', JSON.stringify(filteredForms));
+        const updatedUserForms = userForms.filter(
+          form => !uploadedIds.includes(form.agendaId),
+        );
+        setUserForms(updatedUserForms);
+      }
     } catch (error) {
-      console.error("Error saat mengunggah:", error);
+      console.error('Error saat mengunggah:', error);
     }
   };
-  
-
-
-
-
 
   const renderItem = ({item}) => {
     const fillPercentage = calculateFillPercentage(item);
@@ -221,8 +187,7 @@ const TrackAbsensiForm = () => {
                 borderBottomColor: 'gray',
               }}>
               <TouchableOpacity
-             
-                onPress={handleSubmit} // Attach the handleSubmit function here
+                onPress={handleSubmit}
                 style={{
                   backgroundColor: 'white',
                   borderColor: '#4CAF50',

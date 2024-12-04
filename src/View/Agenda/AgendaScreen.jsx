@@ -68,8 +68,6 @@ const AgendaScreen = () => {
     fetchData();
   }, []);
 
-
-
   const handleSearch = query => {
     setSearchQuery(query);
     const filtered = agendas.filter(agenda =>
@@ -90,80 +88,104 @@ const AgendaScreen = () => {
   };
 
   const renderAgendaItem = ({item, index}) => (
-    <View
-      style={{
-        padding: 10,
-        marginVertical: 5,
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 5,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}>
-      <TouchableOpacity
-        activeOpacity={0.9}
-        onPress={() => {
-          if (!visible) {
-            setSelectedAgenda(item);
-            setVisible(true);
-          }
+    console.log(item.status),
+    (
+      <View
+        style={{
+          padding: 10,
+          marginVertical: 5,
+          borderWidth: 1,
+          borderColor: '#ddd',
+          borderRadius: 5,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
         }}>
-        <Text style={{fontWeight: 'bold', fontSize: 16, color: 'black'}}>
-          {index + 1}. {item.nama}
-        </Text>
-      </TouchableOpacity>
-      {!expired ? (
-        <>
-          {
-            <TouchableOpacity
-              onPress={() => {
-                item.idUser === user.id
-                  ? navigate.navigate('Form', {
-                      agendaId: item.id,
-                      kegiatanId: kegiatanId,
-                      name: item.nama,
-                    })
-                  : handleKegiatan(item);
-              }}
-              activeOpacity={0.9}
-              style={{
-                backgroundColor:
-                  item.idUser === user.id
-                    ? '#37AFE1'
-                    : item.status
-                    ? 'red'
-                    : '#4CAF50',
-                padding: 8,
-                alignItems: 'center',
-                width: 120,
-                borderRadius: 5,
-              }}>
-              <Text style={{color: 'white'}}>
-                {item.idUser === user.id ? (
-                  <Text style={{color: 'white'}}>Lihat</Text>
-                ) : item.status ? (
-                  'Sudah Diambil'
-                ) : (
-                  'Ambil Agenda'
-                )}
-              </Text>
-            </TouchableOpacity>
-          }
-        </>
-      ) : (
-        <View
-          style={{
-            backgroundColor: 'green',
-            padding: 7,
-            alignItems: 'center',
-            width: 100,
-            borderRadius: 5,
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={() => {
+            if (!visible) {
+              setSelectedAgenda(item);
+              setVisible(true);
+            }
           }}>
-          <Text style={{color: 'white'}}>Agenda selesai</Text>
-        </View>
-      )}
-    </View>
+          <Text style={{fontWeight: 'bold', fontSize: 16, color: 'black'}}>
+            {index + 1}. {item.nama}
+          </Text>
+        </TouchableOpacity>
+        {!expired ? (
+          <>
+            {item.status === false ? (
+              <>
+                <View>
+                  <Text
+                    style={{
+                      backgroundColor: 'orange',
+                       textAlign: 'center',
+                       fontWeight: 'bold',
+                      padding: 8,
+                      alignItems: 'center',
+                      width: 120,
+                      borderRadius: 5,
+                    }}>
+                    Sedang ditinjau
+                  </Text>
+                </View>
+              </>
+            ) : (
+              <>
+                {
+                  <TouchableOpacity
+                    onPress={() => {
+                      item.idUser === user.id
+                        ? navigate.navigate('Form', {
+                            agendaId: item.id,
+                            kegiatanId: kegiatanId,
+                            name: item.nama,
+                          })
+                        : handleKegiatan(item);
+                    }}
+                    activeOpacity={0.9}
+                    style={{
+                      backgroundColor:
+                        item.idUser === user.id
+                          ? '#37AFE1'
+                          : item.status
+                          ? 'red'
+                          : '#4CAF50',
+                      padding: 8,
+                      alignItems: 'center',
+                      width: 120,
+                      borderRadius: 5,
+                    }}>
+                    <Text style={{color: 'white'}}>
+                      {item.idUser === user.id ? (
+                        <Text style={{color: 'white'}}>Lihat</Text>
+                      ) : item.status ? (
+                        'Sudah Diambil'
+                      ) : (
+                        'Ambil Agenda'
+                      )}
+                    </Text>
+                  </TouchableOpacity>
+                }
+              </>
+            )}
+          </>
+        ) : (
+          <View
+            style={{
+              backgroundColor: 'green',
+              padding: 7,
+              alignItems: 'center',
+              width: 100,
+              borderRadius: 5,
+            }}>
+            <Text style={{color: 'white'}}>Agenda selesai</Text>
+          </View>
+        )}
+      </View>
+    )
   );
 
   return (
@@ -185,7 +207,7 @@ const AgendaScreen = () => {
             style={{
               padding: 10,
               width: '100%',
-              paddingLeft: 40, // Memberi jarak untuk ikon di sebelah kiri
+              paddingLeft: 40, 
               borderWidth: 1,
               borderColor: '#ddd',
               color: '#333',

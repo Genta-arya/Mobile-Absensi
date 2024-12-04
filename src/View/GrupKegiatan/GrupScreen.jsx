@@ -12,6 +12,8 @@ import {useNavigation} from '@react-navigation/native';
 import {useGroupStore} from '../../Library/Zustand/GrupStore';
 
 const GrupScreen = ({user, refresh}) => {
+
+  console.log(user)
   const navigate = useNavigation();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const {setGroupName} = useGroupStore();

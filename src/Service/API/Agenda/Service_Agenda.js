@@ -33,3 +33,17 @@ export const claimAgenda = async (data) => {
         throw error
     }
 }
+
+export const historyAgenda = async (data) => {
+    console.log("id:"+ data)
+
+    try {
+        const response = await AxiosConfig.post(API_URL + `/history/agenda`, {
+            id: data
+        });
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}

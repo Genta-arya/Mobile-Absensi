@@ -35,6 +35,8 @@ const AgendaScreen = () => {
   const {claim} = useClaimAgenda();
   const [expired, setExpired] = useState(false);
 
+  console.log("id saya",user.id)
+
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -88,7 +90,7 @@ const AgendaScreen = () => {
   };
 
   const renderAgendaItem = ({item, index}) => (
-    console.log(item.status),
+    console.log(item),
     (
       <View
         style={{
@@ -115,9 +117,9 @@ const AgendaScreen = () => {
         </TouchableOpacity>
         {!expired ? (
           <>
-            {item.status === false ? (
+            {item.status === true && item.idUser === user.id ? (
               <>
-                <View>
+                <TouchableOpacity activeOpacity={0.9}>
                   <Text
                     style={{
                       backgroundColor: 'orange',
@@ -125,12 +127,13 @@ const AgendaScreen = () => {
                        fontWeight: 'bold',
                       padding: 8,
                       alignItems: 'center',
+                      color: 'white',
                       width: 120,
                       borderRadius: 5,
                     }}>
-                    Sedang ditinjau
+                    Edit
                   </Text>
-                </View>
+                </TouchableOpacity>
               </>
             ) : (
               <>

@@ -53,14 +53,15 @@ const HistoryScreen = ({user}) => {
         shadowRadius: 3.84,
         elevation: 5,
       }}>
-      <Text style={{fontSize: 18, fontWeight: 'bold', marginBottom: 4}}>
+      <Text style={{fontSize: 18, fontWeight: '900', marginBottom: 4 , color:"black"}}>
         {item.nama}
       </Text>
-      <Text style={{fontSize: 18, fontWeight: 'bold', marginBottom: 4}}>
-        {item.status ? 'Selesai' : ''}
-      </Text>
+    
       <Text style={{fontSize: 14, color: 'black'}}>
-        Dosen: {item.creatorName || '-'}
+        By {item.creatorName || '-'}
+      </Text>
+      <Text style={{fontSize: 15, fontWeight: '900', marginBottom: 4 , color:`${item.status ? 'green' : 'red'}` , textAlign:"right"}}>
+        {item.status ? 'Selesai' : ''}
       </Text>
     </View>
   );
@@ -68,7 +69,7 @@ const HistoryScreen = ({user}) => {
   return (
     <>
       {agendaList.length !== 0 && (
-        <View>
+        <View style={{marginTop: 20}}>
           <Text
             style={{
               fontSize: 20,

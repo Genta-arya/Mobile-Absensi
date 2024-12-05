@@ -47,3 +47,13 @@ export const historyAgenda = async (data) => {
         throw error;
     }
 }
+
+
+export const getForm = async (id) => {
+    try {
+        const response = await AxiosConfig.get(API_URL + `/form/${id}`);
+        return response.data
+    } catch (error) {
+        throw error
+    }
+}

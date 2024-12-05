@@ -112,6 +112,7 @@ const TrackAbsensiForm = () => {
           style={{
             width: 200,
             marginRight: 10,
+          
           }}>
           <Text
             style={{
@@ -162,9 +163,12 @@ const TrackAbsensiForm = () => {
         <Text
           style={{
             fontSize: 20,
-            fontWeight: 'bold',
+           
+            fontWeight: '900',
+            marginTop: 15,
+
             color: 'black',
-            marginBottom: 10,
+            marginBottom: 16,
           }}>
           Absensi saya
         </Text>
@@ -214,6 +218,7 @@ const TrackAbsensiForm = () => {
               marginBottom: 10,
               fontWeight: 'bold',
               color: 'black',
+              paddingBottom:200,
             }}>
             {completedForms.length} dari {userForms.length} form absensi sudah
             lengkap

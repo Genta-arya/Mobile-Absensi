@@ -27,7 +27,6 @@ const AgendaScreen = () => {
   const [visible, setVisible] = useState(false);
   const navigate = useNavigation();
   const [selectedAgenda, setSelectedAgenda] = useState(null);
-  const [dataAbsensi, setDataAbsensi] = useState([]);
   const [kegiatanId, setKegiatanId] = useState(null);
   const [filteredAgendas, setFilteredAgendas] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -35,7 +34,7 @@ const AgendaScreen = () => {
   const {claim} = useClaimAgenda();
   const [expired, setExpired] = useState(false);
 
-  console.log("id saya",user.id)
+  console.log('id saya', user.id);
 
   const fetchData = async () => {
     setLoading(true);
@@ -50,7 +49,7 @@ const AgendaScreen = () => {
         setExpired(response.expired);
         setFilteredAgendas(response.agendas);
 
-        console.log('agendas:', response.agendas);
+        
 
         const kegiatanIds = response.agendas
           .filter(agenda => agenda.idUser === user.id)
@@ -66,9 +65,12 @@ const AgendaScreen = () => {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+   
+      fetchData();
+    }, [])
+  );
 
   const handleSearch = query => {
     setSearchQuery(query);
@@ -117,14 +119,14 @@ const AgendaScreen = () => {
         </TouchableOpacity>
         {!expired ? (
           <>
-            {item.status === true && item.idUser === user.id ? (
+            {item.status_berkas === true && item.idUser === user.id ? (
               <>
                 <TouchableOpacity activeOpacity={0.9}>
                   <Text
                     style={{
                       backgroundColor: 'orange',
-                       textAlign: 'center',
-                       fontWeight: 'bold',
+                      textAlign: 'center',
+                      fontWeight: 'bold',
                       padding: 8,
                       alignItems: 'center',
                       color: 'white',
@@ -210,7 +212,7 @@ const AgendaScreen = () => {
             style={{
               padding: 10,
               width: '100%',
-              paddingLeft: 40, 
+              paddingLeft: 40,
               borderWidth: 1,
               borderColor: '#ddd',
               color: '#333',

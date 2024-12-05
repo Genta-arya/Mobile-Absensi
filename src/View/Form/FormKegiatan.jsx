@@ -79,6 +79,7 @@ const FormKegiatan = () => {
 
   const handleRetryLocation = () => {
     setLocationError(false);
+  
     Geolocation.getCurrentPosition(
       async position => {
         const {latitude, longitude} = position.coords;

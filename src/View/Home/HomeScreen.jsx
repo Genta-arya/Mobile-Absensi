@@ -10,7 +10,7 @@ import TrackAbsensiForm from '../TrackForm/TrackAbsensiForm';
 import HistoryScreen from '../History/HistoryScreen';
 
 const HomeScreen = () => {
-  const {loading, fetchData, user } = useCheckLogin();
+  const {loading, fetchData, user} = useCheckLogin();
 
   if (loading) return <Loading />;
 
@@ -21,9 +21,8 @@ const HomeScreen = () => {
 
         <GrupScreen user={user} refresh={fetchData} />
 
-        <TrackAbsensiForm />
-
         <HistoryScreen user={user} />
+        <TrackAbsensiForm />
       </View>
     </Container>
   );

@@ -49,8 +49,6 @@ const AgendaScreen = () => {
         setExpired(response.expired);
         setFilteredAgendas(response.agendas);
 
-        
-
         const kegiatanIds = response.agendas
           .filter(agenda => agenda.idUser === user.id)
           .map(agenda => agenda.group.kegiatanId);
@@ -67,9 +65,8 @@ const AgendaScreen = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-   
       fetchData();
-    }, [])
+    }, []),
   );
 
   const handleSearch = query => {
@@ -121,7 +118,15 @@ const AgendaScreen = () => {
           <>
             {item.status_berkas === true && item.idUser === user.id ? (
               <>
-                <TouchableOpacity activeOpacity={0.9}>
+                <TouchableOpacity
+                  activeOpacity={0.9}
+                  onPress={() =>
+                    navigate.navigate('EditForm', {
+                      agendaId: item.id,
+                      kegiatanId: kegiatanId,
+                      name: item.nama,
+                    })
+                  }>
                   <Text
                     style={{
                       backgroundColor: 'orange',

@@ -12,8 +12,8 @@ import {
   Alert,
 } from 'react-native';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
-import Geolocation from '@react-native-community/geolocation';
 import {requestCameraPermission} from '../../Library/Permisions/CameraPermission';
+import Geolocation from '@react-native-community/geolocation';
 import useFormStore from '../../Library/Zustand/useFormStore';
 import Svg, {Rect, Text as SvgText} from 'react-native-svg';
 import MapView, {Circle, Marker, Polyline} from 'react-native-maps';

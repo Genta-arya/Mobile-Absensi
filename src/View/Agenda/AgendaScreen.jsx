@@ -16,7 +16,7 @@ import DetailAgenda from './DetailAgenda';
 import useClaimAgenda from '../../Hooks/useClaimAgenda';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faSearch} from '@fortawesome/free-solid-svg-icons';
+import {faClipboard, faPencilAlt, faSearch} from '@fortawesome/free-solid-svg-icons';
 
 const AgendaScreen = () => {
   const route = useRoute();
@@ -135,10 +135,17 @@ const AgendaScreen = () => {
                       padding: 8,
                       alignItems: 'center',
                       color: 'white',
-                      width: 120,
+                      width: 80,
                       borderRadius: 5,
                     }}>
-                    Edit
+                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 5 , justifyContent: 'center'}}>
+                      <FontAwesomeIcon
+                        icon={faPencilAlt}
+                        size={10}
+                        color="white"
+                      />
+                      <Text style={{ color: 'white', fontWeight: 'bold' }}>Edit</Text>
+                    </View>
                   </Text>
                 </TouchableOpacity>
               </>
@@ -172,9 +179,12 @@ const AgendaScreen = () => {
                       {item.idUser === user.id ? (
                         <Text style={{color: 'white'}}>Lihat</Text>
                       ) : item.status ? (
-                        'Sudah Diambil'
+                        <Text style={{color: 'white'}}>Sudah Diambil</Text>
                       ) : (
-                        'Ambil Agenda'
+                        <View style={{flexDirection: 'row', alignItems: 'center', gap: 5 , justifyContent: 'center'}}>
+                          <FontAwesomeIcon icon={faClipboard} size={15} color="white" />
+                          <Text style={{color: 'white' , fontWeight: 'bold'}}>Ambil Agenda</Text>
+                        </View>
                       )}
                     </Text>
                   </TouchableOpacity>

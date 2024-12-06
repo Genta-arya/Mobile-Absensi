@@ -18,6 +18,7 @@ import {faEdit} from '@fortawesome/free-solid-svg-icons';
 import MapView, {Marker} from 'react-native-maps';
 import {API_URL} from '../../Constant/Constant';
 import axios from 'axios';
+import { showMessage } from 'react-native-flash-message';
 
 const EditForm = () => {
   const {agendaId} = useRoute().params;
@@ -149,8 +150,13 @@ const EditForm = () => {
       Alert.alert('Sukses', 'Data berhasil diperbarui!');
       fetchForm();
     } catch (error) {
-      console.error('Error:', error);
-      Alert.alert('Error', error.message + API_URL + `/edit/form`);
+      showMessage({
+        message: 'Notifikasi',
+        description: "Gagal menyimpan data , coba lagi",
+        type: 'info',
+        icon: 'info',
+      })
+     
     }
   };
 
@@ -163,7 +169,7 @@ const EditForm = () => {
           source={{
             uri: imageUri || 'https://via.placeholder.com/150', // Pastikan hanya menggunakan URI
           }}
-          style={{width: '100%', height: 150}}
+          style={{width: '100%', height: 150 , borderWidth:1 , borderColor:"black" , borderRadius:10}}
         />
         <View
           style={{
@@ -190,7 +196,7 @@ const EditForm = () => {
 
   return (
     <ScrollView contentContainerStyle={{padding: 20}}>
-      <Text style={{marginBottom: 8, color: 'black'}}>Detail</Text>
+      <Text style={{marginBottom: 8, color: 'black'}}>Detail Kegiatan</Text>
       <TextInput
         value={formData.detail}
         placeholder="Masukkan Detail"
@@ -256,7 +262,7 @@ const EditForm = () => {
       <Text style={{marginBottom: 8, color: 'black', textAlign: 'center'}}>
         Lokasi saya
       </Text>
-      <View style={{height: 300, marginBottom: 16}}>
+      <View style={{height: 300, marginBottom: 16 , borderWidth:1 , borderColor:"gray" , borderRadius:10}}>
         <MapView
           style={{flex: 1}}
           initialRegion={{

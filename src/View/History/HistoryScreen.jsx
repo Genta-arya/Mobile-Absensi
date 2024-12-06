@@ -70,6 +70,8 @@ const HistoryScreen = ({user}) => {
     <>
       {agendaList.length !== 0 && (
         <View style={{marginTop: 20}}>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+
           <Text
             style={{
               fontSize: 20,
@@ -80,6 +82,8 @@ const HistoryScreen = ({user}) => {
             }}>
             Histori Absensi
           </Text>
+          <Text style={{fontSize: 14, color: Colors.green , fontWeight:"900"}}>Lihat semua</Text>
+          </View>
           {loading ? (
             <>
               <View

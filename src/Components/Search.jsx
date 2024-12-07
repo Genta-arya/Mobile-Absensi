@@ -1,40 +1,41 @@
 import React from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { useSearchStore } from '../Library/Zustand/SearchStore';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'; // Import FontAwesomeIcon
-import { faTimes, faSearch } from '@fortawesome/free-solid-svg-icons'; // Import ikon "X" dan "search"
+import {View, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
+import {useSearchStore} from '../Library/Zustand/SearchStore';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {faTimes, faSearch} from '@fortawesome/free-solid-svg-icons';
 
 const SearchComponent = () => {
-  const { searchTerm, setSearchTerm } = useSearchStore();
+  const {searchTerm, setSearchTerm} = useSearchStore();
 
   const clearSearch = () => {
-    setSearchTerm(''); // Mengatur searchTerm menjadi string kosong
+    setSearchTerm('');
   };
 
   return (
- 
-      <View style={styles.inputContainer}>
-        {/* Ikon pencarian */}
-        <FontAwesomeIcon icon={faSearch} style={styles.searchIcon} size={20} color="#ccc"  />
-        <TextInput
-          placeholder="Cari nama grup..."
-          placeholderTextColor="#ccc"
-          value={searchTerm}
-          onChangeText={setSearchTerm}
-          style={styles.textInput}
-        />
-        {/* Ikon untuk menghapus pencarian */}
-        {searchTerm.length > 0 && ( // Hanya tampilkan ikon jika ada teks pencarian
-          <TouchableOpacity onPress={clearSearch} style={styles.clearIcon}>
-            <FontAwesomeIcon icon={faTimes} size={20} color="#ccc" />
-          </TouchableOpacity>
-        )}
-      </View>
-   
+    <View style={styles.inputContainer}>
+      <FontAwesomeIcon
+        icon={faSearch}
+        style={styles.searchIcon}
+        size={20}
+        color="#ccc"
+      />
+      <TextInput
+        placeholder="Cari nama grup..."
+        placeholderTextColor="#ccc"
+        value={searchTerm}
+        onChangeText={setSearchTerm}
+        style={styles.textInput}
+      />
+
+      {searchTerm.length > 0 && (
+        <TouchableOpacity onPress={clearSearch} style={styles.clearIcon}>
+          <FontAwesomeIcon icon={faTimes} size={20} color="#ccc" />
+        </TouchableOpacity>
+      )}
+    </View>
   );
 };
 
-// Styling
 const styles = StyleSheet.create({
   container: {
     padding: 0,

@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import {View, Text, FlatList, ActivityIndicator} from 'react-native';
 import {historyAgenda} from '../../Service/API/Agenda/Service_Agenda';
-
 import {Colors} from '../../Constant/Constant';
 import {useFocusEffect} from '@react-navigation/native';
-import Loading from '../../Components/Loading';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {  faCircleCheck } from '@fortawesome/free-solid-svg-icons';
 
 const HistoryScreen = ({user}) => {
   const [agendaList, setAgendaList] = useState([]);
@@ -52,16 +52,46 @@ const HistoryScreen = ({user}) => {
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         elevation: 5,
+        justifyContent: 'space-between',
       }}>
-      <Text style={{fontSize: 18, fontWeight: '900', marginBottom: 4 , color:"black"}}>
+    
+      <Text
+        style={{
+          fontSize: 18,
+          fontWeight: '900',
+          marginBottom: 4,
+          color: 'black',
+        }}>
         {item.nama}
       </Text>
-    
+
+   
       <Text style={{fontSize: 14, color: 'black'}}>
         By {item.creatorName || '-'}
       </Text>
-      <Text style={{fontSize: 15, fontWeight: '900', marginBottom: 4 , color:`${item.status ? 'green' : 'red'}` , textAlign:"right"}}>
-        {item.status ? 'Selesai' : ''}
+
+  
+      <Text
+        style={{
+          fontSize: 15,
+          fontWeight: '900',
+          marginTop: 8, 
+          color: item.status ? 'green' : 'red',
+          textAlign: 'right', 
+        }}>
+        {item.status ? (
+          <View style={{flexDirection: 'row', alignItems: 'center' , gap: 5}}>
+          
+            <FontAwesomeIcon
+              icon={faCircleCheck}
+              size={15}
+              color={Colors.green}
+            />
+            <Text style={{color: Colors.green , fontWeight: '900'}}>Selesai</Text>
+          </View>
+        ) : (
+          <Text>Belum Selesai</Text>
+        )}
       </Text>
     </View>
   );
@@ -69,20 +99,22 @@ const HistoryScreen = ({user}) => {
   return (
     <>
       {agendaList.length !== 0 && (
-        <View style={{marginTop: 20}}>
+        <View style={{marginTop: 10}}>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: '900',
 
-          <Text
-            style={{
-              fontSize: 20,
-              fontWeight: '900',
-
-              color: 'black',
-              marginBottom: 16,
-            }}>
-            Histori Absensi
-          </Text>
-          <Text style={{fontSize: 14, color: Colors.green , fontWeight:"900"}}>Lihat semua</Text>
+                color: 'black',
+                marginBottom: 16,
+              }}>
+              Histori Absensi
+            </Text>
+            <Text
+              style={{fontSize: 14, color: Colors.green, fontWeight: '900'}}>
+              Lihat semua
+            </Text>
           </View>
           {loading ? (
             <>
@@ -105,7 +137,7 @@ const HistoryScreen = ({user}) => {
               renderItem={renderAgendaItem}
             />
           ) : (
-            <Text style={{fontSize: 16, color: 'black'}}>No agenda found</Text>
+            <Text style={{fontSize: 16, color: 'black'}}>Tidak ada histori</Text>
           )}
         </View>
       )}

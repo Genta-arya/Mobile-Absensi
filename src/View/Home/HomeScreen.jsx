@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import useCheckLogin from '../../Hooks/useCheckLogin';
 import Loading from '../../Components/Loading';
@@ -15,16 +15,21 @@ const HomeScreen = () => {
   if (loading) return <Loading />;
 
   return (
-    <Container>
-      <View style={{flexDirection: 'column'}}>
-        <Header user={user} />
+    <ScrollView style={{backgroundColor: 'white'}}>
+      <Container>
+        <View style={{flexDirection: 'column'}}>
+          <Header user={user} />
 
-        <GrupScreen user={user} refresh={fetchData} />
+          <GrupScreen user={user} refresh={fetchData} />
 
-        <HistoryScreen user={user} />
-        <TrackAbsensiForm />
-      </View>
-    </Container>
+          <HistoryScreen user={user} />
+
+          <View style={{marginBottom: 50 , paddingBottom: 50}}>
+            <TrackAbsensiForm />
+          </View>
+        </View>
+      </Container>
+    </ScrollView>
   );
 };
 

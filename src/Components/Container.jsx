@@ -1,4 +1,4 @@
-import {View, Text, StatusBar, SafeAreaView} from 'react-native';
+import {StatusBar, SafeAreaView} from 'react-native';
 import React from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import {Colors} from '../Constant/Constant';
@@ -9,16 +9,15 @@ const Container = ({props, children}) => {
       colors={['#f5f5f5', '#eaeaea', '#ffffff']}
       style={{
         flex: 1,
-        position: 'relative',
 
+        position: 'relative',
+        paddingBottom: 70,
         padding: 15,
         borderTopColor: 'gray',
         borderTopWidth: 0,
       }}>
-      <View>
-        <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
-        <SafeAreaView>{children}</SafeAreaView>
-      </View>
+      <StatusBar barStyle="dark-content" backgroundColor={Colors.white} />
+      <SafeAreaView>{children}</SafeAreaView>
     </LinearGradient>
   );
 };

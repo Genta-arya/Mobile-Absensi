@@ -1,12 +1,9 @@
 import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import HomeScreen from '../View/Home/HomeScreen';
 import {Colors, pathScreen} from '../Constant/Constant';
 import Login from '../View/Authentikasi/Login';
 import ProfileScreen from '../View/Profile/ProfileScreen';
-import {Pressable, Text} from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MyTabs from './BottomNav';
 import ListGrup from '../View/GrupKegiatan/components/ListGrup';
 import HeaderLefts from '../Components/HeaderLeft';

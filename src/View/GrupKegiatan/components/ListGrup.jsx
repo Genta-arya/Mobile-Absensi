@@ -71,7 +71,8 @@ const {setGroupName} = useGroupStore()
   const filteredData = user.Group?.filter(item =>
     item.nama_grup.toLowerCase().includes(searchTerm.toLowerCase()),
   );
- 
+
+  
 
   return (
     <>
@@ -132,9 +133,7 @@ const {setGroupName} = useGroupStore()
                   <Text style={{fontSize: 16}}>
                     {selectedKegiatan.nama || 'Kegiatan Tanpa Nama'}
                   </Text>
-                  {/* hilangkan jam nya
-                   */}
-
+                 
                   <Text style={{color: '#666'}}>
                     Mulai:{' '}
                     {formatDate(selectedKegiatan.waktumulai)}

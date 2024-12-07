@@ -8,7 +8,7 @@ import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 const ErrorScreen = () => {
-  const { fetchData, hasError, isFetching } = useUserStore();
+  const { fetchData, isFetching } = useUserStore();
   const route = useRoute();
   const routes = route.name
   const navigate = useNavigation();

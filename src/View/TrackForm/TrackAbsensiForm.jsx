@@ -76,7 +76,6 @@ const TrackAbsensiForm = () => {
       });
 
       const result = await response.json();
-      console.log('Hasil unggahan:', result);
 
       const uploadedIds = result.data;
 
@@ -112,7 +111,6 @@ const TrackAbsensiForm = () => {
           style={{
             width: 200,
             marginRight: 10,
-          
           }}>
           <Text
             style={{
@@ -163,9 +161,9 @@ const TrackAbsensiForm = () => {
         <Text
           style={{
             fontSize: 20,
-           
+
             fontWeight: '900',
-            marginTop: 15,
+            marginTop: 0,
 
             color: 'black',
             marginBottom: 16,
@@ -218,7 +216,6 @@ const TrackAbsensiForm = () => {
               marginBottom: 10,
               fontWeight: 'bold',
               color: 'black',
-              paddingBottom:200,
             }}>
             {completedForms.length} dari {userForms.length} form absensi sudah
             lengkap

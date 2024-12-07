@@ -7,6 +7,8 @@ import {StyleSheet, Image, View} from 'react-native';
 import {useAuthStore} from '../Library/Zustand/AuthStore';
 import ListGrup from '../View/GrupKegiatan/components/ListGrup';
 import NotifikasiScreen from '../View/Notifikasi/NotifikasiScreen';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import { faHistory} from '@fortawesome/free-solid-svg-icons';
 
 const Tab = createBottomTabNavigator();
 
@@ -56,19 +58,20 @@ export default function MyTabs() {
 
       <Tab.Screen
         name={'Notifikasi'}
+        
         component={NotifikasiScreen}
         options={{
+     
           tabBarIcon: ({focused}) => (
-            <FontAwesome5
-              name="bell"
+            <FontAwesomeIcon
+              icon={faHistory}
               size={24}
               color={focused ? Colors.green : Colors.grey}
             />
           ),
-          title: 'Groups',
+          title: 'History Absensi',
         }}
       />
-     
 
       <Tab.Screen
         name={'Profiles'}
@@ -92,16 +95,12 @@ export default function MyTabs() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    right: 20,
     elevation: 5,
     borderColor: 'gray',
     borderWidth: 0.5,
     backgroundColor: '#ffffff',
-    borderRadius: 20,
-    height: 70,
+   
+    height: 60,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

@@ -2,9 +2,6 @@ import React, {useEffect, useState} from 'react';
 
 import {useAuthStore} from '../Library/Zustand/AuthStore';
 import {useNavigation, useRoute} from '@react-navigation/native';
-
-import {useModalStore} from '../Library/Zustand/modalStore';
-
 import useUserStore from '../Library/Zustand/SessionStore';
 import useErrorHandler from './useErrorHandler';
 

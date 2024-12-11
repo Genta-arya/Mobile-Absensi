@@ -5,7 +5,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 
 // export const API_URL = 'https://dev-absensi.hkks.shop/api/v1';
-export const API_URL = 'http://192.168.1.46:3008/api/v1';
+export const API_URL = 'http://192.168.0.3:3008/api/v1';
 
 
 export const Endpoint = {

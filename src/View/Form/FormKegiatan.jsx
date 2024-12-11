@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TextInput,
-  Button,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
@@ -17,9 +16,9 @@ import Geolocation from '@react-native-community/geolocation';
 import useFormStore from '../../Library/Zustand/useFormStore';
 import Svg, {Rect, Text as SvgText} from 'react-native-svg';
 import MapView, {Circle, Marker, Polyline} from 'react-native-maps';
-import {Colors} from '../../Constant/Constant';
+import {Colors, pathScreen} from '../../Constant/Constant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useRoute} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {showMessage} from 'react-native-flash-message';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faCamera, faImage, faSave} from '@fortawesome/free-solid-svg-icons';
@@ -46,7 +45,7 @@ const FormKegiatan = () => {
   const route = useRoute();
   const {user} = useAuthStore();
   const [locationError, setLocationError] = useState(false);
-
+ const navigate = useNavigation()
   const {agendaId, kegiatanId, name} = route.params;
 
   const getAddressFromCoordinates = async (latitude, longitude) => {
@@ -200,6 +199,7 @@ const FormKegiatan = () => {
         type: 'success',
         icon: 'success',
       });
+      navigate.navigate(pathScreen.Home)
 
       console.log('Data berhasil disimpan:', formArray);
     } catch (error) {

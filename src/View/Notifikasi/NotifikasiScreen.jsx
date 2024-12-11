@@ -44,7 +44,7 @@ const NotifikasiScreen = () => {
 
   return (
     <>
-      <HeaderBack title={'Notifikasi'} />
+      <HeaderBack title={'History Absensi'} />
       <Container>
         <FlatList
           data={notifications}

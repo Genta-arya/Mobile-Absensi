@@ -1,5 +1,5 @@
 import {View, Text, FlatList, TouchableOpacity, TextInput} from 'react-native';
-import React, {useEffect, useState, useLayoutEffect} from 'react';
+import React, {useState} from 'react';
 import {
   useFocusEffect,
   useNavigation,
@@ -16,7 +16,12 @@ import DetailAgenda from './DetailAgenda';
 import useClaimAgenda from '../../Hooks/useClaimAgenda';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faClipboard, faPencilAlt, faSearch} from '@fortawesome/free-solid-svg-icons';
+import {
+  faClipboard,
+  faPencilAlt,
+  faSearch,
+} from '@fortawesome/free-solid-svg-icons';
+import {showMessage} from 'react-native-flash-message';
 
 const AgendaScreen = () => {
   const route = useRoute();
@@ -34,7 +39,7 @@ const AgendaScreen = () => {
   const {claim} = useClaimAgenda();
   const [expired, setExpired] = useState(false);
 
-  console.log('id saya', user.id);
+ 
 
   const fetchData = async () => {
     setLoading(true);
@@ -53,7 +58,7 @@ const AgendaScreen = () => {
           .filter(agenda => agenda.idUser === user.id)
           .map(agenda => agenda.group.kegiatanId);
 
-        console.log('kegiatanId yang sesuai dengan user.id:', kegiatanIds);
+
         setKegiatanId(kegiatanIds[0]);
       }
     } catch (error) {
@@ -89,123 +94,171 @@ const AgendaScreen = () => {
   };
 
   const renderAgendaItem = ({item, index}) => (
-    console.log(item),
-    (
-      <View
-        style={{
-          padding: 10,
-          marginVertical: 5,
-          borderWidth: 1,
-          borderColor: '#ddd',
-          borderRadius: 5,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+    <View
+      style={{
+        padding: 10,
+        marginVertical: 5,
+
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 5,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}>
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={() => {
+          if (!visible) {
+            setSelectedAgenda(item);
+            setVisible(true);
+          }
         }}>
-        <TouchableOpacity
-          activeOpacity={0.9}
-          onPress={() => {
-            if (!visible) {
-              setSelectedAgenda(item);
-              setVisible(true);
-            }
+        <Text
+          ellipsizeMode="tail"
+          style={{
+            fontWeight: 'bold',
+            fontSize: 16,
+            color: 'black',
+            width: 200,
           }}>
-          <Text style={{fontWeight: 'bold', fontSize: 16, color: 'black'}}>
-            {index + 1}. {item.nama}
-          </Text>
-        </TouchableOpacity>
-        {!expired ? (
-          <>
-            {item.status_berkas === true && item.idUser === user.id ? (
-              <>
-                <TouchableOpacity
-                  activeOpacity={0.9}
-                  onPress={() =>
-                    navigate.navigate('EditForm', {
-                      agendaId: item.id,
-                      kegiatanId: kegiatanId,
-                      name: item.nama,
-                    })
-                  }>
-                  <Text
+          {index + 1}. {item.nama}
+        </Text>
+      </TouchableOpacity>
+      {!expired ? (
+        <>
+          {item.status_berkas === true && item.idUser === user.id ? (
+            <>
+              <TouchableOpacity
+                activeOpacity={0.9}
+                onPress={() =>
+                  navigate.navigate('EditForm', {
+                    agendaId: item.id,
+                    kegiatanId: kegiatanId,
+                    name: item.nama,
+                  })
+                }>
+                <Text
+                  style={{
+                    backgroundColor: 'orange',
+                    textAlign: 'center',
+                    fontWeight: 'bold',
+                    padding: 8,
+                    alignItems: 'center',
+                    color: 'white',
+                    width: 125,
+                    borderRadius: 5,
+                  }}>
+                  <View
                     style={{
-                      backgroundColor: 'orange',
-                      textAlign: 'center',
-                      fontWeight: 'bold',
-                      padding: 8,
+                      flexDirection: 'row',
                       alignItems: 'center',
-                      color: 'white',
-                      width: 80,
-                      borderRadius: 5,
+                      gap: 8,
+                      justifyContent: 'center',
                     }}>
-                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 5 , justifyContent: 'center'}}>
-                      <FontAwesomeIcon
-                        icon={faPencilAlt}
-                        size={10}
-                        color="white"
-                      />
-                      <Text style={{ color: 'white', fontWeight: 'bold' }}>Edit</Text>
-                    </View>
+                    <FontAwesomeIcon
+                      icon={faPencilAlt}
+                      size={10}
+                      color="white"
+                    />
+                    <Text style={{color: 'white', fontWeight: 'bold'}}>
+                      Edit Absensi
+                    </Text>
+                  </View>
+                </Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              {
+                <TouchableOpacity
+                  onPress={() => {
+                    item.idUser === user.id
+                      ? navigate.navigate('Form', {
+                          agendaId: item.id,
+                          kegiatanId: kegiatanId,
+                          name: item.nama,
+                        })
+                      : handleKegiatan(item);
+                  }}
+                  activeOpacity={0.9}
+                  style={{
+                    backgroundColor:
+                      item.idUser === user.id
+                        ? '#37AFE1'
+                        : item.status
+                        ? 'red'
+                        : '#4CAF50',
+                    padding: 8,
+                    alignItems: 'center',
+                    width: 130,
+                    borderRadius: 5,
+                  }}>
+                  <Text style={{color: 'white'}}>
+                    {item.idUser === user.id ? (
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 5,
+                          justifyContent: 'center',
+                        }}>
+                        <FontAwesomeIcon
+                          icon={faClipboard}
+                          size={15}
+                          color="white"
+                        />
+                        <Text style={{color: 'white'}}>Form Absensi</Text>
+                      </View>
+                    ) : item.status ? (
+                      <Text style={{color: 'white'}}>Sudah Diambil</Text>
+                    ) : (
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 5,
+                          justifyContent: 'center',
+                        }}>
+                        <FontAwesomeIcon
+                          icon={faClipboard}
+                          size={15}
+                          color="white"
+                        />
+                        <Text style={{color: 'white', fontWeight: 'bold'}}>
+                          Ambil Agenda
+                        </Text>
+                      </View>
+                    )}
                   </Text>
                 </TouchableOpacity>
-              </>
-            ) : (
-              <>
-                {
-                  <TouchableOpacity
-                    onPress={() => {
-                      item.idUser === user.id
-                        ? navigate.navigate('Form', {
-                            agendaId: item.id,
-                            kegiatanId: kegiatanId,
-                            name: item.nama,
-                          })
-                        : handleKegiatan(item);
-                    }}
-                    activeOpacity={0.9}
-                    style={{
-                      backgroundColor:
-                        item.idUser === user.id
-                          ? '#37AFE1'
-                          : item.status
-                          ? 'red'
-                          : '#4CAF50',
-                      padding: 8,
-                      alignItems: 'center',
-                      width: 120,
-                      borderRadius: 5,
-                    }}>
-                    <Text style={{color: 'white'}}>
-                      {item.idUser === user.id ? (
-                        <Text style={{color: 'white'}}>Lihat</Text>
-                      ) : item.status ? (
-                        <Text style={{color: 'white'}}>Sudah Diambil</Text>
-                      ) : (
-                        <View style={{flexDirection: 'row', alignItems: 'center', gap: 5 , justifyContent: 'center'}}>
-                          <FontAwesomeIcon icon={faClipboard} size={15} color="white" />
-                          <Text style={{color: 'white' , fontWeight: 'bold'}}>Ambil Agenda</Text>
-                        </View>
-                      )}
-                    </Text>
-                  </TouchableOpacity>
-                }
-              </>
-            )}
-          </>
-        ) : (
-          <View
-            style={{
-              backgroundColor: 'green',
-              padding: 7,
-              alignItems: 'center',
-              width: 100,
-              borderRadius: 5,
-            }}>
+              }
+            </>
+          )}
+        </>
+      ) : (
+        <View
+          style={{
+            backgroundColor: 'green',
+            padding: 7,
+            alignItems: 'center',
+            width: 120,
+            borderRadius: 5,
+          }}>
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={() =>
+              showMessage({
+                message: 'Kegiatan ini telah selesai',
+                type: 'success',
+                icon: 'info',
+              })
+            }>
             <Text style={{color: 'white'}}>Agenda selesai</Text>
-          </View>
-        )}
-      </View>
-    )
+          </TouchableOpacity>
+        </View>
+      )}
+    </View>
   );
 
   return (
@@ -241,6 +294,7 @@ const AgendaScreen = () => {
         </View>
 
         <FlatList
+          style={{paddingBottom: 50}}
           data={filteredAgendas}
           renderItem={renderAgendaItem}
           keyExtractor={item => item.id}

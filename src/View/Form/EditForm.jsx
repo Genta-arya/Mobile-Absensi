@@ -14,11 +14,12 @@ import {getForm} from '../../Service/API/Agenda/Service_Agenda';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
 import {requestCameraPermission} from '../../Library/Permisions/CameraPermission';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faEdit} from '@fortawesome/free-solid-svg-icons';
+import {faEdit, faSave} from '@fortawesome/free-solid-svg-icons';
 import MapView, {Marker} from 'react-native-maps';
-import {API_URL} from '../../Constant/Constant';
+import {API_URL, Colors} from '../../Constant/Constant';
 import axios from 'axios';
-import { showMessage } from 'react-native-flash-message';
+import {showMessage} from 'react-native-flash-message';
+import Loading from '../../Components/Loading';
 
 const EditForm = () => {
   const {agendaId} = useRoute().params;
@@ -35,13 +36,22 @@ const EditForm = () => {
     gambar1: null,
     gambar2: null,
   });
+  const [loading, setLoading] = useState(false);
 
   const fetchForm = async () => {
     try {
+      setLoading(true);
       const response = await getForm(agendaId);
       setFormData(response.data);
     } catch (error) {
       console.log(error);
+      showMessage({
+        message: 'Gagal mengambil data formulir',
+        type: 'danger',
+        icon: 'danger',
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -102,7 +112,11 @@ const EditForm = () => {
 
   const validateFormData = () => {
     if (!formData.detail.trim()) {
-      Alert.alert('Error', 'Detail tidak boleh kosong!');
+      showMessage({
+        message: 'Detail Kegiatan tidak boleh kosong!',
+        type: 'info',
+        icon: 'danger',
+      });
       return false;
     }
 
@@ -146,17 +160,20 @@ const EditForm = () => {
         },
       });
 
-      console.log(response.data);
-      Alert.alert('Sukses', 'Data berhasil diperbarui!');
+      showMessage({
+        message: 'Notifikasi',
+        description: 'Formulir berhasil diperbarui',
+        type: 'success',
+        icon: 'success',
+      });
       fetchForm();
     } catch (error) {
       showMessage({
         message: 'Notifikasi',
-        description: "Gagal menyimpan data , coba lagi",
+        description: 'Gagal menyimpan data , coba lagi',
         type: 'info',
         icon: 'info',
-      })
-     
+      });
     }
   };
 
@@ -167,9 +184,15 @@ const EditForm = () => {
       <View style={{position: 'relative', marginBottom: 16}}>
         <Image
           source={{
-            uri: imageUri || 'https://via.placeholder.com/150', // Pastikan hanya menggunakan URI
+            uri: imageUri || 'https://via.placeholder.com/150',
           }}
-          style={{width: '100%', height: 150 , borderWidth:1 , borderColor:"black" , borderRadius:10}}
+          style={{
+            width: '100%',
+            height: 150,
+            borderWidth: 1,
+            borderColor: 'black',
+            borderRadius: 10,
+          }}
         />
         <View
           style={{
@@ -193,6 +216,8 @@ const EditForm = () => {
   const gpsCoordinates = formData.gps
     ? formData.gps.split(',').map(Number)
     : [37.78825, -122.4324];
+
+  if (loading) return <Loading />;
 
   return (
     <ScrollView contentContainerStyle={{padding: 20}}>
@@ -262,7 +287,14 @@ const EditForm = () => {
       <Text style={{marginBottom: 8, color: 'black', textAlign: 'center'}}>
         Lokasi saya
       </Text>
-      <View style={{height: 300, marginBottom: 16 , borderWidth:1 , borderColor:"gray" , borderRadius:10}}>
+      <View
+        style={{
+          height: 300,
+          marginBottom: 16,
+          borderWidth: 1,
+          borderColor: 'gray',
+          borderRadius: 10,
+        }}>
         <MapView
           style={{flex: 1}}
           initialRegion={{
@@ -282,11 +314,22 @@ const EditForm = () => {
       </View>
 
       <TouchableOpacity
-        style={{padding: 10, backgroundColor: 'green', borderRadius: 8}}
+        activeOpacity={0.9}
+        style={{padding: 10, backgroundColor: Colors.green, borderRadius: 8}}
         onPress={handleSubmit}>
-        <Text style={{color: 'white', fontWeight: 'bold', textAlign: 'center'}}>
-          Simpan
-        </Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 10,
+            justifyContent: 'center',
+          }}>
+          <FontAwesomeIcon icon={faSave} size={20} color="white" />
+          <Text
+            style={{color: 'white', fontWeight: 'bold', textAlign: 'center'}}>
+            Simpan
+          </Text>
+        </View>
       </TouchableOpacity>
     </ScrollView>
   );

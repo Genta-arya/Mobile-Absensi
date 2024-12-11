@@ -13,7 +13,6 @@ const useUserStore = create(set => ({
     const tokenString = await AsyncStorage.getItem('token');
     const token = tokenString ? JSON.parse(tokenString) : null;
     set({isFetching: true, hasError: false, errorMessage: null});
-  
 
     try {
       const response = await CheckSession(token);
@@ -25,16 +24,23 @@ const useUserStore = create(set => ({
       if (response.data.name === null) {
         navigation.navigate(pathScreen.Profile);
       } else {
-        navigation.navigate(pathScreen.Home);
+        if (response.data.role === 'MHS') {
+          navigation.navigate(pathScreen.Home);
+        } else {
+          navigation.navigate('webview');
+        }
       }
     } catch (error) {
-      handleError(error, route);
+      console.log(error.response);
 
       if (error.response.status === 401) {
         await AsyncStorage.removeItem('token');
         setUser(null);
         navigation.navigate(pathScreen.Login);
+      } else if (error.status === 404) {
+        console.log(error.response.data);
       } else {
+        handleError(error, route);
         showMessage({
           message: 'Gagal Terhubung keserver. Coba lagi',
           type: 'danger',

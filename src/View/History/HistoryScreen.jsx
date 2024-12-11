@@ -1,15 +1,21 @@
 import React, {useState} from 'react';
-import {View, Text, FlatList, ActivityIndicator} from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 import {historyAgenda} from '../../Service/API/Agenda/Service_Agenda';
 import {Colors} from '../../Constant/Constant';
-import {useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {  faCircleCheck } from '@fortawesome/free-solid-svg-icons';
+import {faCircleCheck} from '@fortawesome/free-solid-svg-icons';
 
 const HistoryScreen = ({user}) => {
   const [agendaList, setAgendaList] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const navigate = useNavigation();
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -54,7 +60,6 @@ const HistoryScreen = ({user}) => {
         elevation: 5,
         justifyContent: 'space-between',
       }}>
-    
       <Text
         style={{
           fontSize: 18,
@@ -65,29 +70,28 @@ const HistoryScreen = ({user}) => {
         {item.nama}
       </Text>
 
-   
       <Text style={{fontSize: 14, color: 'black'}}>
         By {item.creatorName || '-'}
       </Text>
 
-  
       <Text
         style={{
           fontSize: 15,
           fontWeight: '900',
-          marginTop: 8, 
+          marginTop: 8,
           color: item.status ? 'green' : 'red',
-          textAlign: 'right', 
+          textAlign: 'right',
         }}>
         {item.status ? (
-          <View style={{flexDirection: 'row', alignItems: 'center' , gap: 5}}>
-          
+          <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
             <FontAwesomeIcon
               icon={faCircleCheck}
               size={15}
               color={Colors.green}
             />
-            <Text style={{color: Colors.green , fontWeight: '900'}}>Selesai</Text>
+            <Text style={{color: Colors.green, fontWeight: '900'}}>
+              Selesai
+            </Text>
           </View>
         ) : (
           <Text>Belum Selesai</Text>
@@ -111,10 +115,14 @@ const HistoryScreen = ({user}) => {
               }}>
               Histori Absensi
             </Text>
-            <Text
-              style={{fontSize: 14, color: Colors.green, fontWeight: '900'}}>
-              Lihat semua
-            </Text>
+            <TouchableOpacity
+              onPress={() => navigate.navigate('History')}
+              activeOpacity={0.9}>
+              <Text
+                style={{fontSize: 14, color: Colors.green, fontWeight: '900'}}>
+                Lihat semua
+              </Text>
+            </TouchableOpacity>
           </View>
           {loading ? (
             <>
@@ -137,7 +145,9 @@ const HistoryScreen = ({user}) => {
               renderItem={renderAgendaItem}
             />
           ) : (
-            <Text style={{fontSize: 16, color: 'black'}}>Tidak ada histori</Text>
+            <Text style={{fontSize: 16, color: 'black'}}>
+              Tidak ada histori
+            </Text>
           )}
         </View>
       )}

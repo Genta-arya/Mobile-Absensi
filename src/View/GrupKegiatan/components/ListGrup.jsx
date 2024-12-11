@@ -68,7 +68,7 @@ const {setGroupName} = useGroupStore()
     </TouchableOpacity>
   );
 
-  const filteredData = user.Group?.filter(item =>
+  const filteredData = user?.Group?.filter(item =>
     item.nama_grup.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 

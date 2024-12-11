@@ -6,9 +6,10 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {StyleSheet, Image, View} from 'react-native';
 import {useAuthStore} from '../Library/Zustand/AuthStore';
 import ListGrup from '../View/GrupKegiatan/components/ListGrup';
-import NotifikasiScreen from '../View/Notifikasi/NotifikasiScreen';
+
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import { faHistory} from '@fortawesome/free-solid-svg-icons';
+import HistoryAbsensi from '../View/Notifikasi/AllHistory';
 
 const Tab = createBottomTabNavigator();
 
@@ -57,9 +58,9 @@ export default function MyTabs() {
       />
 
       <Tab.Screen
-        name={'Notifikasi'}
+        name={'History'}
         
-        component={NotifikasiScreen}
+        component={HistoryAbsensi}
         options={{
      
           tabBarIcon: ({focused}) => (

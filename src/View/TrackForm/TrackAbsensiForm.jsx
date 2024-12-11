@@ -204,7 +204,7 @@ const TrackAbsensiForm = () => {
                     textAlign: 'center',
                     fontWeight: 'bold',
                   }}>
-                  Kirim Absensi
+                  Kirim Data
                 </Text>
               </TouchableOpacity>
             </View>

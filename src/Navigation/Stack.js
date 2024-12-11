@@ -12,6 +12,8 @@ import {useGroupStore} from '../Library/Zustand/GrupStore';
 import ErrorScreen from '../Components/ErrorScreen';
 import FormKegiatan from '../View/Form/FormKegiatan';
 import EditForm from '../View/Form/EditForm';
+import WebVIew from '../Components/WebVIew';
+import DetailForm from '../View/Form/DetailForm';
 const Stack = createNativeStackNavigator();
 
 const MyStack = () => {
@@ -46,6 +48,12 @@ const MyStack = () => {
               </>
             ),
           })}
+        />
+
+        <Stack.Screen
+          name={'webview'}
+          component={WebVIew}
+          options={{title: 'Welcome', headerShown: false}}
         />
 
         <Stack.Screen
@@ -99,7 +107,20 @@ const MyStack = () => {
             headerLeft: () => <HeaderLefts navigation={navigation} />,
           })}
         />
-         <Stack.Screen
+        <Stack.Screen
+          name={'DetailForm'}
+          component={DetailForm}
+          options={({navigation}) => ({
+            title: 'Kembali',
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: Colors.white,
+            },
+            statusBarAnimation: 'slide',
+            headerLeft: () => <HeaderLefts navigation={navigation} />,
+          })}
+        />
+        <Stack.Screen
           name={'EditForm'}
           component={EditForm}
           options={({navigation}) => ({

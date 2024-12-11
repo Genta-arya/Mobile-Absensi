@@ -128,6 +128,8 @@ const EditForm = () => {
 
     const form = new FormData();
 
+    setLoading(true);
+
     form.append(
       'forms',
       JSON.stringify({
@@ -168,12 +170,15 @@ const EditForm = () => {
       });
       fetchForm();
     } catch (error) {
+      console.log(error);
       showMessage({
         message: 'Notifikasi',
         description: 'Gagal menyimpan data , coba lagi',
         type: 'info',
         icon: 'info',
       });
+    } finally {
+      setLoading(false);
     }
   };
 

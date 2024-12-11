@@ -8,7 +8,7 @@ import {useAuthStore} from '../Library/Zustand/AuthStore';
 import ListGrup from '../View/GrupKegiatan/components/ListGrup';
 
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import { faHistory} from '@fortawesome/free-solid-svg-icons';
+import {faHistory} from '@fortawesome/free-solid-svg-icons';
 import HistoryAbsensi from '../View/Notifikasi/AllHistory';
 
 const Tab = createBottomTabNavigator();
@@ -59,10 +59,8 @@ export default function MyTabs() {
 
       <Tab.Screen
         name={'History'}
-        
         component={HistoryAbsensi}
         options={{
-     
           tabBarIcon: ({focused}) => (
             <FontAwesomeIcon
               icon={faHistory}
@@ -100,7 +98,7 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 0.5,
     backgroundColor: '#ffffff',
-   
+
     height: 60,
     shadowColor: '#000',
     shadowOffset: {

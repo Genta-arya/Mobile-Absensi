@@ -2,8 +2,8 @@ import NetWrokError from '../Assets/Image/NetworkError.png';
 import Empty from '../Assets/Image/empty.png';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-// export const API_URL = 'https://dev-absensi.hkks.shop/api/v1';
-export const API_URL = 'http://192.168.1.7:3008/api/v1';
+export const API_URL = 'https://absensi.apiservices.my.id/api/v1';
+// export const API_URL = 'http://192.168.1.7:3008/api/v1';
 export const WEBVIEW_URL = 'http://192.168.1.7:5173/?token=';
 
 export const Endpoint = {

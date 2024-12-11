@@ -23,6 +23,7 @@ import {showMessage} from 'react-native-flash-message';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faCamera, faImage, faSave} from '@fortawesome/free-solid-svg-icons';
 import {useAuthStore} from '../../Library/Zustand/AuthStore';
+import Loading from '../../Components/Loading';
 
 const FormKegiatan = () => {
   const {
@@ -42,10 +43,11 @@ const FormKegiatan = () => {
   const [city, setCity] = useState('');
   const [road, setRoad] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadings, setLoadings] = useState(false);
   const route = useRoute();
   const {user} = useAuthStore();
   const [locationError, setLocationError] = useState(false);
- const navigate = useNavigation()
+  const navigate = useNavigation();
   const {agendaId, kegiatanId, name} = route.params;
 
   const getAddressFromCoordinates = async (latitude, longitude) => {
@@ -78,7 +80,7 @@ const FormKegiatan = () => {
 
   const handleRetryLocation = () => {
     setLocationError(false);
-  
+
     Geolocation.getCurrentPosition(
       async position => {
         const {latitude, longitude} = position.coords;
@@ -177,6 +179,7 @@ const FormKegiatan = () => {
       kegiatanId,
       name,
     };
+    setLoadings(true);
 
     try {
       const existingData = await AsyncStorage.getItem('formData');
@@ -199,11 +202,13 @@ const FormKegiatan = () => {
         type: 'success',
         icon: 'success',
       });
-      navigate.navigate(pathScreen.Home)
+      navigate.navigate(pathScreen.Home);
 
       console.log('Data berhasil disimpan:', formArray);
     } catch (error) {
       console.error('Error menyimpan data:', error);
+    } finally {
+      setLoadings(false);
     }
   };
 
@@ -268,6 +273,7 @@ const FormKegiatan = () => {
       </ImageBackground>
     );
   };
+  if (loadings) return <Loading />;
 
   return (
     <ScrollView style={styles.container}>

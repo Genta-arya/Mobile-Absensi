@@ -5,6 +5,7 @@ import {useAuthStore} from '../../Library/Zustand/AuthStore';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {API_URL} from '../../Constant/Constant';
 import Loading from '../../Components/Loading';
+import { showMessage } from 'react-native-flash-message';
 
 const TrackAbsensiForm = () => {
   const [userForms, setUserForms] = useState([]);
@@ -96,6 +97,11 @@ const TrackAbsensiForm = () => {
           form => !uploadedIds.includes(form.agendaId),
         );
         setUserForms(updatedUserForms);
+        showMessage({
+          message: 'Data berhasil diunggah',
+          type: 'success',
+          icon: 'success',
+        });
       }
     } catch (error) {
       console.error('Error saat mengunggah:', error);

@@ -71,6 +71,7 @@ const useCheckLogin = () => {
   return {
     loading: isFetching,
     user,
+    setUser,
     fetchData,
     error,
   };

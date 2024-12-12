@@ -20,6 +20,7 @@ const useUserStore = create(set => ({
         navigation.navigate(pathScreen.Home);
       }
       setUser(response.data);
+    
 
       if (response.data.name === null) {
         navigation.navigate(pathScreen.Profile);

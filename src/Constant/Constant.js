@@ -4,7 +4,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 export const API_URL = 'https://absensi.apiservices.my.id/api/v1';
 // export const API_URL = 'http://192.168.1.7:3008/api/v1';
-export const WEBVIEW_URL = 'http://192.168.1.7:5173/?token=';
+export const WEBVIEW_URL = 'https://absensi-client.vercel.app?token=';
 
 export const Endpoint = {
   Login: `${API_URL}/login`,

@@ -1,4 +1,4 @@
-import {Text, View, FlatList, TextInput, TouchableOpacity} from 'react-native';
+import {Text, View, FlatList, TextInput, TouchableOpacity, useColorScheme} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import HeaderBack from '../../Components/HeaderBack';
 import {getAllAgenda} from '../../Service/API/Agenda/Service_Agenda';
@@ -18,6 +18,7 @@ const HistoryAbsensi = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const {user} = useAuthStore();
  const navigate = useNavigation();
+ const colorScheme = useColorScheme();
   useEffect(() => {
     fetchData();
   }, []);
@@ -55,6 +56,8 @@ const HistoryAbsensi = () => {
 
     setFilteredAgenda(filteredData);
   };
+  
+  
 
   if (loading) {
     return <Loading />;
@@ -64,6 +67,8 @@ const HistoryAbsensi = () => {
     <>
       <HeaderBack title="History Absensi" />
       <View style={{flex: 1, paddingHorizontal: 10}}>
+      <View>
+
         <TextInput
           style={{
             height: 40,
@@ -72,9 +77,9 @@ const HistoryAbsensi = () => {
             borderRadius: 5,
             marginBottom: 10,
             position: 'relative',
-            paddingLeft: 35,
+            paddingLeft: 45,
           }}
-          placeholder="Cari berdasarkan Nama"
+          placeholder="Cari Nama Agenda..."
           placeholderTextColor={'#ccc'}
           value={searchText}
           onChangeText={setSearchText}
@@ -82,11 +87,13 @@ const HistoryAbsensi = () => {
         <View style={{position: 'absolute', left: 20, top: 12}}>
           <FontAwesomeIcon icon={faSearch} />
         </View>
+      </View>
 
         <View
           style={{
             marginBottom: 10,
-            backgroundColor: Colors.green,
+            // DETECT SISTEM JIKA TEMA GELAP MAKA WARNA PUTIH BG NYA
+            backgroundColor: colorScheme === 'dark' ? '#333' : '#fff',
             borderRadius: 10,
          
           }}>

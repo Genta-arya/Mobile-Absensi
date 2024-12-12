@@ -23,6 +23,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import useErrorHandler from '../../Hooks/useErrorHandler';
 import ModalProfile from './component/ModalProfile';
+import {updateAvatar} from '../../Service/API/Profile/service_Profile';
+import Loading from '../../Components/Loading';
 
 const ProfileScreen = () => {
   const {user, setUser} = useAuthStore();
@@ -32,7 +34,8 @@ const ProfileScreen = () => {
   const [modalAvatar, setModalAvatar] = useState(false);
   const [nama, setNama] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
-  const [previewImage, setPreviewImage] = useState(null); // Untuk menampung gambar preview
+  const [previewImage, setPreviewImage] = useState(user?.avatar); // Untuk menampung gambar preview
+  const [loading, setLoading] = useState(false);
   const handleError = useErrorHandler();
 
   const handleImagePick = async () => {
@@ -111,13 +114,46 @@ const ProfileScreen = () => {
       console.log('ImagePicker Error: ', response.error);
     } else if (response.assets && response.assets.length > 0) {
       const source = {uri: response.assets[0].uri};
-      setPreviewImage(source.uri); // Set image preview setelah memilih foto
+
+      changeAvatar(source.uri);
     } else {
       console.log('No image was selected');
     }
   };
 
+  const changeAvatar = async (image) => {
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', {
+        uri: image,
+        type: 'image/jpeg', // Sesuaikan tipe file (jpeg/png)
+        name: 'avatar.jpg',
+      });
+
+      const response = await updateAvatar(user.id, formData);
+      showMessage({
+        message: 'Berhasil',
+        description: 'Berhasil memperbarui avatar',
+        type: 'success',
+        icon: 'success',
+      });
+      setPreviewImage(response.avatar);
+      setUser({...user, avatar: response.avatar});
+    } catch (error) {
+      showMessage({
+        message: 'Gagal',
+        description: 'Gagal memperbarui avatar',
+        type: 'info',
+        icon: 'info',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const Logout = async () => {
+    setLoading(true);
     try {
       const response = await HandleLogout(user.id);
       showMessage({
@@ -134,8 +170,11 @@ const ProfileScreen = () => {
       });
     } catch (error) {
       handleError(error, '*');
+    } finally {
+      setLoading(false);
     }
   };
+  if (loading) return <Loading />;
 
   return (
     <Container>
@@ -150,7 +189,7 @@ const ProfileScreen = () => {
           marginBottom: 20,
         }}>
         <Image
-          source={{uri: user?.avatar}}
+          source={{uri: previewImage}}
           style={{
             width: 150,
             height: 150,

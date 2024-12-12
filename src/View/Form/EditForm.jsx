@@ -67,8 +67,8 @@ const EditForm = () => {
 
   const handleImagePress = field => {
     Alert.alert(
-      'Pilih Gambar',
-      '',
+      'Alert',
+      'Gambar yang diubah harus secara berurutan, jika ingin mengubah gambar 2, maka gambar 1 akan tergantikan.',
       [
         {
           text: 'Batal',

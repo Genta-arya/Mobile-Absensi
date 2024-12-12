@@ -152,6 +152,7 @@ const HistoryAbsensi = () => {
 
                 {item.status === true && (
                   <TouchableOpacity
+                  activeOpacity={0.9}
                   onPress={() => navigate.navigate('DetailForm', {id: item.id})}
                     style={{
                       backgroundColor: Colors.green,

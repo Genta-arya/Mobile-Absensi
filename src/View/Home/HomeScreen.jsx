@@ -5,7 +5,6 @@ import Loading from '../../Components/Loading';
 import Container from '../../Components/Container';
 import Header from './components/Header';
 import GrupScreen from '../GrupKegiatan/GrupScreen';
-import ErrorScreen from '../../Components/ErrorScreen';
 import TrackAbsensiForm from '../TrackForm/TrackAbsensiForm';
 import HistoryScreen from '../History/HistoryScreen';
 

@@ -40,64 +40,72 @@ const HistoryScreen = ({user}) => {
   );
 
   const renderAgendaItem = ({item}) => (
-    <View
-      style={{
-        marginRight: 15,
-        padding: 16,
-        backgroundColor: '#f0f0f0',
-        borderRadius: 8,
-        borderWidth: 1,
-        width: 250,
-        borderLeftColor: Colors.green,
-        borderLeftWidth: 8,
-        shadowColor: '#000',
-        shadowOffset: {
-          width: 0,
-          height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
-        justifyContent: 'space-between',
-      }}>
-      <Text
+    
+    (
+      <TouchableOpacity
         style={{
-          fontSize: 18,
-          fontWeight: '900',
-          marginBottom: 4,
-          color: 'black',
-        }}>
-        {item.nama}
-      </Text>
+          marginRight: 15,
+          padding: 16,
+          backgroundColor: '#f0f0f0',
+          borderRadius: 8,
+          borderWidth: 1,
+          width: 250,
+          borderLeftColor: Colors.green,
+          borderLeftWidth: 8,
+          shadowColor: '#000',
+          shadowOffset: {
+            width: 0,
+            height: 2,
+          },
+          shadowOpacity: 0.25,
+          shadowRadius: 3.84,
+          elevation: 5,
+          justifyContent: 'space-between',
+        }}
+        activeOpacity={0.9}
+        onPress={() => navigate.navigate('DetailForm', {id: item.id})}>
+        <View>
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: '900',
+              marginBottom: 4,
+              color: 'black',
+            }}>
+            {item.nama}
+          </Text>
 
-      <Text style={{fontSize: 14, color: 'black'}}>
-        By {item.creatorName || '-'}
-      </Text>
+          <Text style={{fontSize: 14, color: 'black'}}>
+            By {item.creatorName || '-'}
+          </Text>
 
-      <Text
-        style={{
-          fontSize: 15,
-          fontWeight: '900',
-          marginTop: 8,
-          color: item.status ? 'green' : 'red',
-          textAlign: 'right',
-        }}>
-        {item.status ? (
-          <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
-            <FontAwesomeIcon
-              icon={faCircleCheck}
-              size={15}
-              color={Colors.green}
-            />
-            <Text style={{color: Colors.green, fontWeight: '900'}}>
-              Selesai
-            </Text>
-          </View>
-        ) : (
-          <Text>Belum Selesai</Text>
-        )}
-      </Text>
-    </View>
+          <Text
+            style={{
+              fontSize: 15,
+              fontWeight: '900',
+              marginTop: 8,
+              color: item.status ? 'green' : 'red',
+              textAlign: 'right',
+            }}>
+            {item.status ? (
+              <View
+                style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
+                <FontAwesomeIcon
+                  icon={faCircleCheck}
+                  size={15}
+                  color={Colors.green}
+                />
+                <Text style={{color: Colors.green, fontWeight: '900'}}>
+                  Selesai
+                </Text>
+              </View>
+            ) : (
+              <Text>Belum Selesai</Text>
+            )}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    )
   );
 
   return (

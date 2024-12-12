@@ -12,27 +12,29 @@ import {useAuthStore} from '../../Library/Zustand/AuthStore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {pathScreen} from '../../Constant/Constant';
 import {useNavigation} from '@react-navigation/native';
-import useCheckLogin from '../../Hooks/useCheckLogin';
 import {showMessage} from 'react-native-flash-message';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+
 const Login = () => {
   const [nim, setNim] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // State untuk mengatur visibilitas password
   const {user, setUser} = useAuthStore();
   const navigate = useNavigation();
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(false);
+
   const getToken = async () => {
     try {
       const tokenString = await AsyncStorage.getItem('token');
       const token = tokenString ? JSON.parse(tokenString) : null;
-
       setToken(token);
     } catch (error) {
       console.log('Error mengambil token:', error);
     }
   };
 
-  // Contoh penyimpanan token yang benar
   const saveToken = async tokenData => {
     try {
       await AsyncStorage.setItem('token', JSON.stringify(tokenData));
@@ -44,20 +46,22 @@ const Login = () => {
   useEffect(() => {
     getToken();
   }, []);
+
   useEffect(() => {
     if (token !== null) {
       navigate.reset({
         index: 0,
         routes: [{name: pathScreen.Home}],
-      })
+      });
     }
   }, [token]);
+
   const HandleLogins = async () => {
     try {
       if (nim === '' || password === '') {
         showMessage({
           message: 'Username atau password tidak boleh kosong',
-          type: 'danger',
+          type: 'info',
           icon: 'danger',
           position: 'bottom',
         });
@@ -76,14 +80,13 @@ const Login = () => {
 
       saveToken(response.data.token);
 
-     navigate.reset({
-       index: 0,
-       routes: [{name: pathScreen.Home}],
-     })
+      navigate.reset({
+        index: 0,
+        routes: [{name: pathScreen.Home}],
+      });
     } catch (error) {
-      
       showMessage({
-        message: error.response?.data.message || 'Gagal terhubung ke server',
+        message: error.response?.data.message || 'Gagal terhubung ke server , coba lagi',
         type: 'danger',
         icon: 'danger',
         position: 'bottom',
@@ -92,7 +95,6 @@ const Login = () => {
       setLoading(false);
     }
   };
-
 
   return (
     <View
@@ -132,27 +134,44 @@ const Login = () => {
         }}
       />
 
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={text => setPassword(text)}
-        secureTextEntry
-        placeholderTextColor={'#ccc'}
+      <View
         style={{
           width: '100%',
-          height: 50,
+          flexDirection: 'row',
+          alignItems: 'center',
           borderColor: '#ccc',
-          color: 'black',
           borderWidth: 1,
           borderRadius: 8,
-          paddingLeft: 15,
-          marginBottom: 30,
           backgroundColor: '#fff',
-        }}
-      />
+          marginBottom: 30,
+        }}>
+        <TextInput
+          placeholder="Password"
+          value={password}
+          onChangeText={text => setPassword(text)}
+          secureTextEntry={!showPassword}
+          placeholderTextColor={'#ccc'}
+          style={{
+            flex: 1,
+            height: 50,
+            paddingLeft: 15,
+            color: 'black',
+          }}
+        />
+        <TouchableOpacity
+        activeOpacity={0.9}
+          onPress={() => setShowPassword(!showPassword)}
+          style={{
+            paddingHorizontal: 10,
+          }}>
+          <Text style={{color: showPassword ? '#4CAF50' : '#ccc'}}>
+            {showPassword ? <FontAwesomeIcon  icon={faEye} /> : <FontAwesomeIcon  icon={faEyeSlash}/>}
+          </Text>
+        </TouchableOpacity>
+      </View>
 
       <TouchableOpacity
-        activeOpacity={0.6}
+        activeOpacity={0.9}
         disabled={loading}
         style={{
           width: '100%',

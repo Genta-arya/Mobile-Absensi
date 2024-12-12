@@ -4,11 +4,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useAuthStore} from '../../Library/Zustand/AuthStore';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {API_URL} from '../../Constant/Constant';
+import Loading from '../../Components/Loading';
 
 const TrackAbsensiForm = () => {
   const [userForms, setUserForms] = useState([]);
   const {user} = useAuthStore();
   const navigation = useNavigation();
+  const [loading, setLoading] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -40,6 +42,8 @@ const TrackAbsensiForm = () => {
     const completedForms = userForms.filter(
       data => calculateFillPercentage(data) === 100,
     );
+
+    setLoading(true);
 
     const formData = new FormData();
     formData.append(
@@ -95,8 +99,12 @@ const TrackAbsensiForm = () => {
       }
     } catch (error) {
       console.error('Error saat mengunggah:', error);
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) return <Loading />;
 
   const renderItem = ({item}) => {
     const fillPercentage = calculateFillPercentage(item);

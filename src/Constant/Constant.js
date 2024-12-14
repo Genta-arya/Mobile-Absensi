@@ -18,7 +18,7 @@ export const Icons = {
 
 export const Colors = {
   red: '#b9c1c',
-  green: '#15803d',
+  green: '#2b4a50',
   grey: '#374151',
   blue: '#1e40af',
   primary: '#001238',

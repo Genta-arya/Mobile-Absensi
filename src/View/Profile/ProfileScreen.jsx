@@ -25,6 +25,7 @@ import useErrorHandler from '../../Hooks/useErrorHandler';
 import ModalProfile from './component/ModalProfile';
 import {updateAvatar} from '../../Service/API/Profile/service_Profile';
 import Loading from '../../Components/Loading';
+import { Colors } from '../../Constant/Constant';
 
 const ProfileScreen = () => {
   const {user, setUser} = useAuthStore();
@@ -195,7 +196,7 @@ const ProfileScreen = () => {
             height: 150,
             borderRadius: 75,
             borderWidth: 4,
-            borderColor: '#4CAF50',
+          
           }}
         />
 
@@ -272,7 +273,7 @@ const ProfileScreen = () => {
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#4CAF50',
+          backgroundColor: Colors.green,
           paddingVertical: 10,
           paddingHorizontal: 20,
           borderRadius: 8,
@@ -296,7 +297,7 @@ const ProfileScreen = () => {
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: 'red',
+          backgroundColor: Colors.red,
           paddingVertical: 10,
           paddingHorizontal: 20,
           borderRadius: 8,

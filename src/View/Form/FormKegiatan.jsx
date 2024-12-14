@@ -44,6 +44,7 @@ const FormKegiatan = () => {
   const [road, setRoad] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadings, setLoadings] = useState(false);
+  const [lokasi, setLokasi] = useState(null);
   const route = useRoute();
   const {user} = useAuthStore();
   const [locationError, setLocationError] = useState(false);
@@ -80,19 +81,21 @@ const FormKegiatan = () => {
 
   const handleRetryLocation = () => {
     setLocationError(false);
+    setGps('Loading...');
 
     Geolocation.getCurrentPosition(
       async position => {
         const {latitude, longitude} = position.coords;
         await getAddressFromCoordinates(latitude, longitude);
         setGps(`${latitude}, ${longitude}`);
+        setLokasi(`${latitude}, ${longitude}`);
         setCoordinates({latitude, longitude});
         setLocationError(false);
       },
       error => {
         console.error('Error mendapatkan lokasi:', error);
         setGps('Gagal mendapatkan lokasi');
-
+        setLokasi(null);
         setLocationError(true);
       },
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
@@ -136,6 +139,7 @@ const FormKegiatan = () => {
           if (agendaData) {
             setDetail(agendaData.detail);
             setGps(agendaData.gps);
+            setLokasi(agendaData.gps);
             setTanggal(agendaData.tanggal);
             setGambar1(agendaData.gambar1);
             setGambar2(agendaData.gambar2);
@@ -167,21 +171,31 @@ const FormKegiatan = () => {
     handleRetryLocation();
   }, []);
 
+  console.log('lokasi', lokasi);
+
   const handleSubmit = async () => {
-    const formData = {
-      userId: user.id,
-      detail,
-      gps,
-      tanggal,
-      gambar1,
-      gambar2,
-      agendaId,
-      kegiatanId,
-      name,
-    };
+    if (lokasi === null) {
+      showMessage({
+        message: 'Tidak dapat menyimpan karna lokasi belum terdeteksi. Silahkan coba lagi',
+        type: 'info',
+        icon: 'info',
+      });
+      return;
+    }
     setLoadings(true);
 
     try {
+      const formData = {
+        userId: user.id,
+        detail,
+        gps: lokasi,
+        tanggal,
+        gambar1,
+        gambar2,
+        agendaId,
+        kegiatanId,
+        name,
+      };
       const existingData = await AsyncStorage.getItem('formData');
       const formArray = existingData ? JSON.parse(existingData) : [];
 
@@ -325,7 +339,7 @@ const FormKegiatan = () => {
         </TouchableOpacity>
       )}
 
-      {coordinates.latitude !== 0 && locationError === false && (
+      {/* {coordinates.latitude !== 0 && locationError === false && (
         <View style={styles.mapContainer}>
           <MapView
             style={styles.map}
@@ -351,7 +365,7 @@ const FormKegiatan = () => {
             />
           </MapView>
         </View>
-      )}
+      )} */}
 
       <Text style={styles.label}>Tanggal</Text>
       <TextInput
@@ -404,6 +418,7 @@ const FormKegiatan = () => {
       {gps && (
         <View style={{paddingBottom: 50}}>
           <TouchableOpacity
+          activeOpacity={0.9}
             onPress={handleSubmit}
             style={{
               backgroundColor: '#4CAF50',

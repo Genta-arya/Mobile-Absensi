@@ -5,17 +5,18 @@ import {
   TouchableOpacity,
   StatusBar,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {HandleLogin} from '../../Service/API/Authentikasi/Service_Authentikasi';
 import {useAuthStore} from '../../Library/Zustand/AuthStore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {pathScreen} from '../../Constant/Constant';
+import {Colors, pathScreen} from '../../Constant/Constant';
 import {useNavigation} from '@react-navigation/native';
 import {showMessage} from 'react-native-flash-message';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {faEye, faEyeSlash, faLock, faUser} from '@fortawesome/free-solid-svg-icons';
+import logo from '../../Assets/Image/logos.png';
 const Login = () => {
   const [nim, setNim] = useState('');
   const [password, setPassword] = useState('');
@@ -86,7 +87,9 @@ const Login = () => {
       });
     } catch (error) {
       showMessage({
-        message: error.response?.data.message || 'Gagal terhubung ke server , coba lagi',
+        message:
+          error.response?.data.message ||
+          'Gagal terhubung ke server , coba lagi',
         type: 'danger',
         icon: 'danger',
         position: 'bottom',
@@ -106,33 +109,66 @@ const Login = () => {
         padding: 20,
       }}>
       <StatusBar barStyle="dark-content" backgroundColor={'#f5f5f5'} />
-      <Text
+      <View
         style={{
-          fontSize: 24,
-          fontWeight: 'bold',
-          marginBottom: 30,
-          color: 'black',
+          flexDirection: 'row',
+          gap: 10,
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginBottom: 40,
         }}>
-        Login to Your Account
-      </Text>
+        <Image source={logo} style={{width: 100, height: 100}} />
+        <View>
+          <View>
+            <Text
+              style={{
+                fontSize: 24,
+                fontWeight: '900',
 
-      <TextInput
-        placeholder="NIM"
-        value={nim}
-        placeholderTextColor={'#ccc'}
-        onChangeText={text => setNim(text)}
+                color: 'black',
+              }}>
+              Meter<Text style={{color: Colors.green}}> Reader Apps</Text>
+            </Text>
+          </View>
+          <Text
+            style={{
+              fontSize: 24,
+              fontWeight: 'bold',
+              marginBottom: 30,
+              color: 'black',
+            }}>
+            Silahkan Login
+          </Text>
+        </View>
+      </View>
+
+      <View
         style={{
           width: '100%',
-          height: 50,
+          flexDirection: 'row',
+          alignItems: 'center',
           borderColor: '#ccc',
-          color: 'black',
           borderWidth: 1,
           borderRadius: 8,
-          paddingLeft: 15,
-          marginBottom: 20,
           backgroundColor: '#fff',
-        }}
-      />
+          marginBottom: 20,
+        }}>
+        <View style={{paddingLeft: 10}}>
+          <FontAwesomeIcon icon={faUser} size={20} color={Colors.green} />
+        </View>
+        <TextInput
+          placeholder="NIM"
+          value={nim}
+          placeholderTextColor={'#ccc'}
+          onChangeText={text => setNim(text)}
+          style={{
+            flex: 1,
+            height: 50,
+            paddingLeft: 15,
+            color: 'black',
+          }}
+        />
+      </View>
 
       <View
         style={{
@@ -145,6 +181,9 @@ const Login = () => {
           backgroundColor: '#fff',
           marginBottom: 30,
         }}>
+        <View style={{paddingLeft: 10}}>
+          <FontAwesomeIcon icon={faLock} size={20} color={Colors.green} />
+        </View>
         <TextInput
           placeholder="Password"
           value={password}
@@ -159,13 +198,18 @@ const Login = () => {
           }}
         />
         <TouchableOpacity
-        activeOpacity={0.9}
+          activeOpacity={0.9}
           onPress={() => setShowPassword(!showPassword)}
           style={{
             paddingHorizontal: 10,
           }}>
-          <Text style={{color: showPassword ? '#4CAF50' : '#ccc'}}>
-            {showPassword ? <FontAwesomeIcon  icon={faEye} /> : <FontAwesomeIcon  icon={faEyeSlash}/>}
+          <Text
+            style={{color: showPassword ? '#4CAF50' : '#ccc', marginRight: 10}}>
+            {showPassword ? (
+              <FontAwesomeIcon icon={faEye} size={24} color={Colors.green} />
+            ) : (
+              <FontAwesomeIcon icon={faEyeSlash} size={24} color={Colors.green} />
+            )}
           </Text>
         </TouchableOpacity>
       </View>
@@ -176,7 +220,7 @@ const Login = () => {
         style={{
           width: '100%',
           height: 50,
-          backgroundColor: '#4CAF50',
+          backgroundColor: Colors.green,
           justifyContent: 'center',
           alignItems: 'center',
           borderRadius: 8,
@@ -187,9 +231,20 @@ const Login = () => {
         {loading ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={{color: '#fff', fontWeight: 'bold'}}>Login</Text>
+          <Text style={{color: '#fff', fontWeight: '900'}}>Masuk</Text>
         )}
       </TouchableOpacity>
+      <Text
+        style={{
+          fontSize: 14,
+          fontWeight: 'bold',
+
+          fontStyle: 'italic',
+          marginTop: 10,
+          color: 'black',
+        }}>
+        Versi 1.0
+      </Text>
     </View>
   );
 };

@@ -24,6 +24,7 @@ const HeaderBack = ({title}) => {
           flexDirection: 'row',
           alignItems: 'center',
           marginRight: 20,
+          marginLeft: 10,
         }}
         accessible={true}
         accessibilityLabel="Kembali ke halaman sebelumnya"
@@ -31,15 +32,16 @@ const HeaderBack = ({title}) => {
           navigation.goBack();
         }}>
         <FontAwesome5 name="angle-left" size={30} color="black" />
+        <Text
+          style={{
+            fontSize: 18,
+            fontWeight: 'bold',
+            marginLeft: 20,
+            color: 'black',
+          }}>
+          {title}
+        </Text>
       </Pressable>
-      <Text
-        style={{
-          fontSize: 18,
-          fontWeight: 'bold',
-          color: 'black',
-        }}>
-        {title}
-      </Text>
     </View>
   );
 };

@@ -1,5 +1,12 @@
-import {Text, View, FlatList, TextInput, TouchableOpacity, useColorScheme} from 'react-native';
-import React, {useState, useEffect} from 'react';
+import {
+  Text,
+  View,
+  FlatList,
+  TextInput,
+  TouchableOpacity,
+  useColorScheme,
+} from 'react-native';
+import React, {useState, useEffect, useCallback} from 'react';
 import HeaderBack from '../../Components/HeaderBack';
 import {getAllAgenda} from '../../Service/API/Agenda/Service_Agenda';
 import {useAuthStore} from '../../Library/Zustand/AuthStore';
@@ -8,7 +15,7 @@ import {Colors} from '../../Constant/Constant';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faCheckCircle, faSearch} from '@fortawesome/free-solid-svg-icons';
 import {Picker} from '@react-native-picker/picker';
-import { useNavigation } from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 
 const HistoryAbsensi = () => {
   const [loading, setLoading] = useState(false);
@@ -17,11 +24,14 @@ const HistoryAbsensi = () => {
   const [searchText, setSearchText] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const {user} = useAuthStore();
- const navigate = useNavigation();
- const colorScheme = useColorScheme();
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const navigate = useNavigation();
+  const colorScheme = useColorScheme();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData();
+    }, []),
+  );
 
   useEffect(() => {
     filterData();
@@ -50,14 +60,12 @@ const HistoryAbsensi = () => {
 
     if (statusFilter !== 'all') {
       filteredData = filteredData.filter(
-        item => item.status.toString() === statusFilter,
+        item => item.status_berkas.toString() === statusFilter,
       );
     }
 
     setFilteredAgenda(filteredData);
   };
-  
-  
 
   if (loading) {
     return <Loading />;
@@ -67,35 +75,33 @@ const HistoryAbsensi = () => {
     <>
       <HeaderBack title="History Absensi" />
       <View style={{flex: 1, paddingHorizontal: 10}}>
-      <View>
-
-        <TextInput
-          style={{
-            height: 40,
-            borderColor: 'gray',
-            borderWidth: 1,
-            borderRadius: 5,
-            marginBottom: 10,
-            position: 'relative',
-            paddingLeft: 45,
-          }}
-          placeholder="Cari Nama Agenda..."
-          placeholderTextColor={'#ccc'}
-          value={searchText}
-          onChangeText={setSearchText}
-        />
-        <View style={{position: 'absolute', left: 20, top: 12}}>
-          <FontAwesomeIcon icon={faSearch} />
+        <View>
+          <TextInput
+            style={{
+              height: 40,
+              borderColor: 'gray',
+              borderWidth: 1,
+              borderRadius: 5,
+              marginBottom: 10,
+              position: 'relative',
+              paddingLeft: 45,
+            }}
+            placeholder="Cari Nama Agenda..."
+            placeholderTextColor={'#ccc'}
+            value={searchText}
+            onChangeText={setSearchText}
+          />
+          <View style={{position: 'absolute', left: 20, top: 12}}>
+            <FontAwesomeIcon icon={faSearch} />
+          </View>
         </View>
-      </View>
 
         <View
           style={{
             marginBottom: 10,
             // DETECT SISTEM JIKA TEMA GELAP MAKA WARNA PUTIH BG NYA
-            backgroundColor: colorScheme === 'dark' ? '#333' : '#fff',
+            backgroundColor: colorScheme === 'dark' ? 'green' : '#fff',
             borderRadius: 10,
-         
           }}>
           <Picker selectedValue={statusFilter} onValueChange={setStatusFilter}>
             <Picker.Item label="Semua Status" value="all" />
@@ -113,7 +119,6 @@ const HistoryAbsensi = () => {
                 flex: 1,
                 justifyContent: 'center',
                 alignItems: 'center',
-                
               }}>
               <Text style={{color: 'black'}}>Histori Tidak Ditemukan</Text>
             </View>
@@ -124,7 +129,7 @@ const HistoryAbsensi = () => {
                 backgroundColor: '#fff',
                 padding: 12,
                 marginVertical: 4,
-                borderLeftColor: item.status === true ? 'green' : 'red',
+                borderLeftColor: item.status_berkas === true ? 'green' : 'red',
                 borderLeftWidth: 4,
                 borderRadius: 8,
               }}>
@@ -139,7 +144,7 @@ const HistoryAbsensi = () => {
                   marginTop: 8,
                 }}>
                 <Text style={{color: '#777'}}>
-                  {item.status === true ? (
+                  {item.status_berkas === true ? (
                     <View
                       style={{
                         flexDirection: 'row',
@@ -153,14 +158,21 @@ const HistoryAbsensi = () => {
                       </Text>
                     </View>
                   ) : (
-                    'Tidak Hadir'
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <FontAwesomeIcon icon={faTimesCircle} color="red" />
+                      <Text style={{color: 'red', fontWeight: '900'}}>
+                        Tidak Hadir
+                      </Text>
+                    </View>
                   )}
                 </Text>
 
-                {item.status === true && (
+                {item.status_berkas === true && (
                   <TouchableOpacity
-                  activeOpacity={0.9}
-                  onPress={() => navigate.navigate('DetailForm', {id: item.id})}
+                    activeOpacity={0.9}
+                    onPress={() =>
+                      navigate.navigate('DetailForm', {id: item.id})
+                    }
                     style={{
                       backgroundColor: Colors.green,
                       padding: 8,

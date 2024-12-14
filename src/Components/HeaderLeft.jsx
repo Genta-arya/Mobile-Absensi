@@ -12,6 +12,7 @@ const HeaderLefts = ({navigation}) => {
           flexDirection: 'row',
           alignItems: 'center',
           marginRight: 20,
+          marginLeft: 10,
         }}
         accessible={true}
         accessibilityLabel="Kembali ke halaman sebelumnya"

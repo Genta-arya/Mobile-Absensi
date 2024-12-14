@@ -14,6 +14,7 @@ import FormKegiatan from '../View/Form/FormKegiatan';
 import EditForm from '../View/Form/EditForm';
 import WebVIew from '../Components/WebVIew';
 import DetailForm from '../View/Form/DetailForm';
+import Splash from '../View/SplashScreen/Splash';
 const Stack = createNativeStackNavigator();
 
 const MyStack = () => {
@@ -21,6 +22,11 @@ const MyStack = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+      <Stack.Screen
+          name={"splash"}
+          component={Splash}
+          options={{title: 'Welcome', headerShown: false}}
+        />
         <Stack.Screen
           name={pathScreen.Login}
           component={Login}
